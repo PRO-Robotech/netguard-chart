@@ -1,8 +1,8 @@
-apiserver:
-  # Default values for netguard-chart.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
+# Default values for netguard-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
+apiserver:
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
   replicaCount: 1
 
@@ -103,14 +103,16 @@ apiserver:
   nodeSelector: {}
 
   tolerations: []
+    # - key: node-role.kubernetes.io/data-plane
+    #   effect: NoSchedule
+    # - key: node-role.kubernetes.io/in-cloud-infra
+    #   effect: NoSchedule
 
   affinity: {}
+
+  priorityClassName: system-cluster-critical
 
 backend:
-  # Default values for netguard-chart.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
   replicaCount: 1
 
@@ -213,12 +215,10 @@ backend:
   tolerations: []
 
   affinity: {}
+
+  priorityClassName: system-cluster-critical
 
 webhookserver:
-  # Default values for netguard-chart.
-  # This is a YAML-formatted file.
-  # Declare variables to be passed into your templates.
-
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
   replicaCount: 1
 
@@ -321,3 +321,5 @@ webhookserver:
   tolerations: []
 
   affinity: {}
+
+  priorityClassName: system-cluster-critical
