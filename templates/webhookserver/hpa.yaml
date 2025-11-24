@@ -1,0 +1,32 @@
+{{- if .Values.webhookserver.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-webhookserver
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "netguard-chart.fullname" . }}-webhookserver
+  minReplicas: {{ .Values.webhookserver.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.webhookserver.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.webhookserver.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.webhookserver.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.webhookserver.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.webhookserver.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

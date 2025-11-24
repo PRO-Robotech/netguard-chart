@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-webhookserver
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.webhookserver.service.type }}
+  ports:
+    - port: {{ .Values.webhookserver.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/component: webhookserver
+    {{- include "netguard-chart.selectorLabels" . | nindent 4 }}

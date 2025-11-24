@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-apiserver
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.apiserver.service.type }}
+  ports:
+    - port: {{ .Values.apiserver.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/component: apiserver
+    {{- include "netguard-chart.selectorLabels" . | nindent 4 }}

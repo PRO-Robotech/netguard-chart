@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-webhookserver
+  labels:
+    app.kubernetes.io/component: webhookserver
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.webhookserver.autoscaling.enabled }}
+  replicas: {{ .Values.webhookserver.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: webhookserver
+      {{- include "netguard-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.webhookserver.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: webhookserver
+        {{- include "netguard-chart.labels" . | nindent 8 }}
+        {{- with .Values.webhookserver.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.webhookserver.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-webhookserver
+      {{- with .Values.webhookserver.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: webhookserver
+          {{- with .Values.webhookserver.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.webhookserver.image.repository }}:{{ .Values.webhookserver.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.webhookserver.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.webhookserver.service.port }}
+              protocol: TCP
+          {{- with .Values.webhookserver.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.webhookserver.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.webhookserver.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.webhookserver.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.webhookserver.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webhookserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webhookserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webhookserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
