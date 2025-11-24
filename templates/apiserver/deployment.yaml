@@ -59,12 +59,19 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.apiserver.volumeMounts }}
           volumeMounts:
+            - mountPath: /etc/netguard/config.yaml
+              name: apiserver-config
+              subPath: client-config
+          {{- with .Values.apiserver.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.apiserver.volumes }}
       volumes:
+        - name: apiserver-config
+          configMap:
+            defaultMode: 420
+            name: {{ default (printf "%s-apiserver-config" (include "netguard-chart.fullname" .)) .Values.apiserver.customConfigConfigMapName }}
+      {{- with .Values.apiserver.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.apiserver.nodeSelector }}

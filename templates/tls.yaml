@@ -1,0 +1,87 @@
+{{- if (eq .Values.tls.certSource "certmanager") }}
+{{- $extIssuer    := .Values.tls.certmanager.existingIssuer -}}
+{{- $issuerKind   := "Issuer" -}}
+{{- $issuerName   := printf "%s-selfsigned-internal" .Release.Name -}}
+
+{{- if and $extIssuer.kind $extIssuer.name }}
+  {{- $issuerKind   = $extIssuer.kind -}}
+  {{- $issuerName   = $extIssuer.name -}}
+{{- else }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ $issuerName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+{{- end }}
+
+{{- if .Values.apiserver.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-apiserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  issuerRef:
+    group: cert-manager.io
+    kind: {{ $issuerKind }}
+    name: {{ $issuerName }}
+  dnsNames:
+    - "{{ .Release.Name }}-apiserver"
+    - "{{ .Release.Name }}-apiserver.{{ .Release.Namespace }}"
+    - "{{ .Release.Name }}-apiserver.{{ .Release.Namespace }}.svc"
+  commonName: "{{ .Release.Namespace }}-apiserver"
+  secretName: {{ .Release.Name }}-apiserver-tls
+{{- end }}
+
+{{- if .Values.backend.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  issuerRef:
+    group: cert-manager.io
+    kind: {{ $issuerKind }}
+    name: {{ $issuerName }}
+  dnsNames:
+    - "{{ .Release.Name }}-backend"
+    - "{{ .Release.Name }}-backend.{{ .Release.Namespace }}"
+    - "{{ .Release.Name }}-backend.{{ .Release.Namespace }}.svc"
+  commonName: "{{ .Release.Namespace }}-backend"
+  secretName: {{ .Release.Name }}-backend-tls
+{{- end }}
+
+{{- if .Values.webhookserver.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-webhookserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  issuerRef:
+    group: cert-manager.io
+    kind: {{ $issuerKind }}
+    name: {{ $issuerName }}
+  dnsNames:
+    - "{{ .Release.Name }}-webhookserver"
+    - "{{ .Release.Name }}-webhookserver.{{ .Release.Namespace }}"
+    - "{{ .Release.Name }}-webhookserver.{{ .Release.Namespace }}.svc"
+  commonName: "{{ .Release.Namespace }}-webhookserver"
+  secretName: {{ .Release.Name }}-webhookserver-tls
+{{- end }}
+{{- end }}

@@ -1,0 +1,72 @@
+{{- $config         := .Values.apiserver.config -}}
+{{- $backendConfig  := $config.backend_client -}}
+{{- $backendAddr    := printf "%s-backend:%s" (include "netguard-chart.fullname" .) .Values.backend.service.port -}}
+{{- if backendConfig.endpoint }}
+  {{- $backendAddr    = backendConfig.endpoint -}}
+{{- end }}
+{{- $authnConfig    := $config.authn -}}
+{{- $clientCa       := index $authnConfig.tls.client "ca-files" -}}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+  name: {{ include "netguard-chart.fullname" . }}-apiserver-config
+data:
+  client-config: |
+    bind_address:   "0.0.0.0"
+    secure_port:    {{ .Values.apiserver.service.port }}
+    insecure_port:  0  # Insecure port is disabled by default for Kubernetes
+
+    # Logging
+    log_level:  {{ $config.log_level | default "info" }}
+    log_format: {{ $config.log_format | default "json" }}
+
+    # Health Checks
+    health_check_timeout: {{ $config.health_check_timeout | default "60s" }}
+    shutdown_timeout:     {{ $config.shutdown_timeout | default "30s" }}
+
+    # Backend Client Configuration
+    backend_client:
+      endpoint:               "{{ $backendAddr }}"
+      max_retries:            {{ $backendConfig.max_retries             | default 3 }}
+      connect_timeout:        {{ $backendConfig.connect_timeout         | default "10s" }}
+      request_timeout:        {{ $backendConfig.request_timeout         | default "30s" }}
+      rate_limit:             {{ $backendConfig.rate_limit              | default 100.0 }}
+      rate_burst:             {{ $backendConfig.rate_burst              | default 200 }}
+      cb_max_requests:        {{ $backendConfig.cb_max_requests         | default 5 }}
+      cb_interval:            {{ $backendConfig.cb_interval             | default "60s" }}
+      cb_timeout:             {{ $backendConfig.cb_timeout              | default "60s" }}
+      cb_failure_threshold:   {{ $backendConfig.cb_failure_threshold    | default 5 }}
+      cache_default_ttl:      {{ $backendConfig.cache_default_ttl       | default "5m" }}
+      cache_cleanup_interval: {{ $backendConfig.cache_cleanup_interval  | default "10m" }}
+
+    watch:
+      {{ $config.watch | toYaml | nindent 6 }}
+
+    authn:
+      # Type: tls, none.
+      # "tls" - default value for kubernetes
+      # "none" - disable tls
+    {{- if (eq .Values.tls.certSource "none") }}
+      type: "none"
+      tls:
+        client:
+          verify: "skip"
+    {{- else }}
+      type: {{ $authnConfig.type | default "tls" }}
+      tls:
+        cert-file: "/etc/certs/tls.crt"
+        key-file: "/etc/certs/tls.key"
+        client:
+          # skip - for self-signed certs
+          verify: {{ $authnConfig.tls.client.verify | default "skip" }}
+          {{- if $clientCa }}
+          ca-files:
+            {{ $clientCa | toYaml | nindent 12 }}
+          {{- else }}
+          ca-files: []
+          {{- end }}
+    {{- end }}
