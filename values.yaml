@@ -6,6 +6,24 @@
 nameOverride: ""
 fullnameOverride: ""
 
+# Database
+externalDatabase:
+  enabled: true
+  url: postgresql
+  port: 5432
+  database: netguard
+  username: netguard
+  password: netguard
+  sslmode: false
+
+postgresql:
+  enabled: false
+  image:
+    repository: bitnamilegacy/postgresql
+  global:
+    security:
+      allowInsecureImages: true
+
 # Certs for tls/mtls between services
 tls:
   # There are three ways to provide tls
@@ -47,7 +65,7 @@ apiserver:
 
   # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
   image:
-    repository: nginx
+    repository: sgroups/sgroups.k8s.netguard-apiserver
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -91,29 +109,33 @@ apiserver:
     # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
     type: ClusterIP
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    port: 8443
+    ports:
+      http: 8443
 
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
 
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
     httpGet:
-      path: /
+      path: /healthz
       port: http
+      scheme: HTTPS
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
   readinessProbe:
     httpGet:
-      path: /
+      path: /healthz
       port: http
+      scheme: HTTPS
+    initialDelaySeconds: 5
+    periodSeconds: 5
 
   # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
   autoscaling:
@@ -202,7 +224,7 @@ backend:
 
   # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
   image:
-    repository: nginx
+    repository: sgroups/sgroups.k8s.netguard-webhook
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -246,29 +268,34 @@ backend:
     # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
     type: ClusterIP
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    port: 80
+    ports:
+      grpc: 9090
+      http: 8080
 
-  resources: {}
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
 
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
     httpGet:
-      path: /
+      path: /healthz
       port: http
+      scheme: HTTPS
+    initialDelaySeconds: 15
+    periodSeconds: 20
+
   readinessProbe:
     httpGet:
-      path: /
+      path: /readyz
       port: http
+      scheme: HTTPS
+    initialDelaySeconds: 5
+    periodSeconds: 10
 
   # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
   autoscaling:
@@ -298,6 +325,23 @@ backend:
   affinity: {}
 
   priorityClassName: system-cluster-critical
+
+  config:
+    sgroups_address:
+    logLevel: "DEBUG"
+    authn:
+      # Type: tls, none.
+      # "tls" - default value for kubernetes
+      # "none" - disable tls
+      type: "tls"
+      tls:
+        # Default cert/key files pathes
+        # cert-file: "/etc/certs/tls.crt"
+        # key-file: "/etc/certs/tls.key"
+        client:
+          # skip - for self-signed certs
+          verify: "skip"
+          ca-files: []
 
 webhookserver:
   enabled: true

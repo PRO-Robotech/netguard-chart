@@ -7,6 +7,7 @@
 {{- $authnConfig    := $config.authn -}}
 {{- $clientCa       := index $authnConfig.tls.client "ca-files" -}}
 
+{{- if .Values.apiserver.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -70,3 +71,4 @@ data:
           ca-files: []
           {{- end }}
     {{- end }}
+{{- end }}

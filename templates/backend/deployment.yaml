@@ -1,3 +1,7 @@
+{{ $backend := .Values.backend }}
+
+{{- if $backend.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,8 +10,8 @@ metadata:
     app.kubernetes.io/component: backend
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.backend.autoscaling.enabled }}
-  replicas: {{ .Values.backend.replicaCount }}
+  {{- if not $backend.autoscaling.enabled }}
+  replicas: {{ $backend.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -15,70 +19,74 @@ spec:
       {{- include "netguard-chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.backend.podAnnotations }}
+      {{- with $backend.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/component: backend
         {{- include "netguard-chart.labels" . | nindent 8 }}
-        {{- with .Values.backend.podLabels }}
+        {{- with $backend.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.backend.imagePullSecrets }}
+      {{- with $backend.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-backend
-      {{- with .Values.backend.podSecurityContext }}
+      {{- with $backend.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: backend
-          {{- with .Values.backend.securityContext }}
+          {{- with $backend.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          image: "{{ $backend.image.repository }}:{{ $backend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $backend.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.backend.service.port }}
+              containerPort: {{ $backend.service.ports.http }}
               protocol: TCP
-          {{- with .Values.backend.livenessProbe }}
+            - name: grpc
+              containerPort: {{ $backend.service.ports.grpc }}
+              protocol: TCP
+          {{- with $backend.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.backend.readinessProbe }}
+          {{- with $backend.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.backend.resources }}
+          {{- with $backend.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.backend.volumeMounts }}
+          {{- with $backend.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.backend.volumes }}
+      {{- with $backend.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.backend.nodeSelector }}
+      {{- with $backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.backend.affinity }}
+      {{- with $backend.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.backend.tolerations }}
+      {{- with $backend.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.backend.priorityClassName }}
-      priorityClassName: "{{ .Values.backend.priorityClassName }}"
+      {{- if $backend.priorityClassName }}
+      priorityClassName: "{{ $backend.priorityClassName }}"
       {{- end }}
+{{- end }}

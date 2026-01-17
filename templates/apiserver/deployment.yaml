@@ -1,3 +1,7 @@
+{{- $apiServer := .Values.apiserver -}}
+
+{{- if $apiServer.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,8 +10,8 @@ metadata:
     app.kubernetes.io/component: apiserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.apiserver.autoscaling.enabled }}
-  replicas: {{ .Values.apiserver.replicaCount }}
+  {{- if not $apiServer.autoscaling.enabled }}
+  replicas: {{ $apiServer.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -15,47 +19,56 @@ spec:
       {{- include "netguard-chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.apiserver.podAnnotations }}
+      {{- with $apiServer.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/component: apiserver
         {{- include "netguard-chart.labels" . | nindent 8 }}
-        {{- with .Values.apiserver.podLabels }}
+        {{- with $apiServer.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.apiserver.imagePullSecrets }}
+      {{- with $apiServer.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-apiserver
-      {{- with .Values.apiserver.podSecurityContext }}
+      {{- with $apiServer.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: apiserver
-          {{- with .Values.apiserver.securityContext }}
+          {{- with $apiServer.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.apiserver.image.repository }}:{{ .Values.apiserver.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.apiserver.image.pullPolicy }}
+          image: "{{ $apiServer.image.repository }}:{{ $apiServer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $apiServer.image.pullPolicy }}
+          command:
+            - /netguard-apiserver
+          # TODO: Убедится, что все эти параметры корректно задаются через конфиг
+          # args:
+          #   - --bind-address=0.0.0.0
+          #   - --secure-port=8443
+          #   - --tls-cert-file=/etc/certs/tls.crt
+          #   - --tls-private-key-file=/etc/certs/tls.key
+          #   - --v=2
           ports:
             - name: http
-              containerPort: {{ .Values.apiserver.service.port }}
+              containerPort: {{ $apiServer.service.ports.http }}
               protocol: TCP
-          {{- with .Values.apiserver.livenessProbe }}
+          {{- with $apiServer.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.apiserver.readinessProbe }}
+          {{- with $apiServer.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.apiserver.resources }}
+          {{- with $apiServer.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -63,29 +76,47 @@ spec:
             - mountPath: /etc/netguard/config.yaml
               name: apiserver-config
               subPath: client-config
-          {{- with .Values.apiserver.volumeMounts }}
+
+          {{- if (ne .Values.tls.certSource "none") }}
+            - mountPath: /etc/certs/
+              name: apiserver-certs
+              subPath: client-config
+
+
+
+            type: "none"
+            tls:
+              client:
+                verify: "skip"
+          {{- end }}
+
+
+
+
+          {{- with $apiServer.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
         - name: apiserver-config
           configMap:
             defaultMode: 420
-            name: {{ default (printf "%s-apiserver-config" (include "netguard-chart.fullname" .)) .Values.apiserver.customConfigConfigMapName }}
-      {{- with .Values.apiserver.volumes }}
+            name: {{ default (printf "%s-apiserver-config" (include "netguard-chart.fullname" .)) $apiServer.customConfigConfigMapName }}
+      {{- with $apiServer.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.apiserver.nodeSelector }}
+      {{- with $apiServer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.apiserver.affinity }}
+      {{- with $apiServer.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.apiserver.tolerations }}
+      {{- with $apiServer.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.apiserver.priorityClassName }}
-      priorityClassName: "{{ .Values.apiserver.priorityClassName }}"
+      {{- if $apiServer.priorityClassName }}
+      priorityClassName: "{{ $apiServer.priorityClassName }}"
       {{- end }}
+{{- end }}

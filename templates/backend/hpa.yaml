@@ -1,4 +1,7 @@
-{{- if .Values.backend.autoscaling.enabled }}
+{{- $hpa := .Values.backend.autoscaling -}}
+
+{{- if and .Values.backend.enabled $hpa.enabled }}
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -10,23 +13,23 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "netguard-chart.fullname" . }}-backend
-  minReplicas: {{ .Values.backend.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.backend.autoscaling.maxReplicas }}
+  minReplicas: {{ $hpa.minReplicas }}
+  maxReplicas: {{ $hpa.maxReplicas }}
   metrics:
-    {{- if .Values.backend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if $hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.backend.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ $hpa.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.backend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if $hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.backend.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ $hpa.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}

@@ -1,3 +1,5 @@
+{{- if .Values.apiserver.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,3 +16,4 @@ spec:
   selector:
     app.kubernetes.io/component: apiserver
     {{- include "netguard-chart.selectorLabels" . | nindent 4 }}
+{{- end }}
