@@ -1,10 +1,15 @@
-{{ $backend := .Values.backend }}
+{{- $backend        := .Values.backend -}}
 {{- $certSource     := .Values.tls.certSource -}}
 {{- $certSecretName := "" -}}
 {{- if eq $certSource "certmanager" }}
 {{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
 {{- else if eq $certSource "secret" }}
 {{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- end }}
+{{- $sa     := $backend.serviceAccount -}}
+{{- $saName := default (printf "%s-backend" (include "netguard-chart.fullname" .)) $sa.name -}}
+{{- if not $sa.create }}
+{{- $saName = "default" -}}
 {{- end }}
 
 {{- if $backend.enabled }}
@@ -41,7 +46,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-backend
+      serviceAccountName: {{ $saName }}
       {{- with $backend.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}

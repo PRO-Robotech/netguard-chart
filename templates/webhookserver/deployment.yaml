@@ -6,6 +6,11 @@
 {{- else if eq $certSource "secret" }}
 {{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
 {{- end }}
+{{- $sa     := $webhookserver.serviceAccount -}}
+{{- $saName := default (printf "%s-webhookserver" (include "netguard-chart.fullname" .)) $sa.name -}}
+{{- if not $sa.create }}
+{{- $saName = "default" -}}
+{{- end }}
 
 {{- if $webhookserver.enabled }}
 ---
@@ -41,7 +46,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-webhookserver
+      serviceAccountName: {{ $saName }}
       {{- with $webhookserver.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
