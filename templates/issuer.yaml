@@ -1,6 +1,7 @@
 {{- $extIssuer    := .Values.tls.certmanager.existingIssuer -}}
 
-{{- if and (eq .Values.tls.certSource "certmanager") (not(and $extIssuer.kind $extIssuer.name)) }}
+{{- if and (eq .Values.tls.certSource "certmanager") (and not $extIssuer.kind $extIssuer.name) }}
+{{- if or (not $extIssuer.kind) (not $extIssuer.name) }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -11,4 +12,5 @@ metadata:
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
   selfSigned: {}
+{{- end }}
 {{- end }}

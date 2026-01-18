@@ -93,7 +93,9 @@ spec:
             - mountPath: /etc/certs/
               name: certificate
           {{- end }}
-          {{- $webhookserver.volumeMounts | toYaml | nindent 12 }}
+          {{- with $webhookserver.volumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: configfile
           configMap:

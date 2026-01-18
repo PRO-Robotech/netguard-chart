@@ -1,6 +1,7 @@
-{{- $config         := .Values.backend.config -}}
-{{- $authnConfig    := $config.authn -}}
-{{- $clientCa       := index $authnConfig.tls.client "ca-files" | default list) -}}
+{{- $backend      := .Values.backend -}}
+{{- $config       := $backend.config -}}
+{{- $authnConfig  := $config.authn -}}
+{{- $clientCa     := (index $authnConfig.tls.client "ca-files" | default list) -}}
 
 {{- if .Values.backend.enabled }}
 ---

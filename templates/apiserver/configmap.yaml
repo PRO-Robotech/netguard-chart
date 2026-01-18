@@ -1,11 +1,11 @@
 {{- $config         := .Values.apiserver.config -}}
 {{- $backendConfig  := $config.backend_client -}}
 {{- $backendAddr    := printf "%s-backend:%s" (include "netguard-chart.fullname" .) .Values.backend.service.port -}}
-{{- if backendConfig.endpoint }}
-  {{- $backendAddr    = backendConfig.endpoint -}}
+{{- if $backendConfig.endpoint }}
+  {{- $backendAddr  = $backendConfig.endpoint -}}
 {{- end }}
 {{- $authnConfig    := $config.authn -}}
-{{- $clientCa       := index $authnConfig.tls.client "ca-files" | default list) -}}
+{{- $clientCa       := (index $authnConfig.tls.client "ca-files" | default list) -}}
 
 {{- if .Values.apiserver.enabled }}
 ---

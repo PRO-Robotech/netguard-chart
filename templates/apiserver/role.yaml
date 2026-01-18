@@ -1,11 +1,9 @@
-{{- with .Values.appSpec.applications.ngapiserver }}
-  {{- if .enabled }}
+{{- if .Values.apiserver.enabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "netguard-chart.fullname" . }}-apiserver
-  namespace: {{ $.Release.Namespace }}
 rules:
   - apiGroups:
       - ""
@@ -16,5 +14,4 @@ rules:
       - get
       - list
       - watch
-  {{- end }}
 {{- end }}

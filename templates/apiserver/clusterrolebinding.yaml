@@ -1,7 +1,8 @@
-{{- $sa     := $apiServer.serviceAccount -}}
-{{- $saName := default (printf "%s-apiserver" (include "netguard-chart.fullname" .)) $sa.name -}}
+{{- $apiServer  := .Values.apiserver -}}
+{{- $sa         := $apiServer.serviceAccount -}}
+{{- $saName     := default (printf "%s-apiserver" (include "netguard-chart.fullname" .)) $sa.name -}}
 {{- if not $sa.create }}
-{{- $saName = "default" -}}
+{{- $saName     = "default" -}}
 {{- end }}
 
 {{- if .Values.apiserver.enabled }}

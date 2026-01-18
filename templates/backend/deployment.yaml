@@ -90,23 +90,27 @@ spec:
             - mountPath: /etc/netguard/config.yaml
               name: configfile
               subPath: client-config
-          {{- if $certSecretName }}
+            {{- if $certSecretName }}
             - mountPath: /etc/certs/
               name: certificate
-          {{- end }}
-          {{- $backend.volumeMounts | toYaml | nindent 12 }}
+            {{- end }}
+            {{- with $backend.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: configfile
           configMap:
             defaultMode: 420
             name: {{ default (printf "%s-backend-config" (include "netguard-chart.fullname" .)) $backend.customConfigConfigMapName }}
-      {{- if $certSecretName }}
+        {{- if $certSecretName }}
         - name: certificate
           secret:
             defaultMode: 420
             secretName: {{ $certSecretName }}
-      {{- end }}
-      {{- $backend.volumes | toYaml | nindent 8 }}
+        {{- end }}
+        {{- with $backend.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with $backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
