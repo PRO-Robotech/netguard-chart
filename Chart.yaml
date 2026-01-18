@@ -22,3 +22,9 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "CLOUD-70_merge-8a236b31"
+
+dependencies:
+  - name: postgresql
+    version: 16.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: postgresql.enabled
