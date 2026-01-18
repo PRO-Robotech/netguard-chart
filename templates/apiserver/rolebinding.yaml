@@ -1,0 +1,21 @@
+{{- $sa     := $apiServer.serviceAccount -}}
+{{- $saName := default (printf "%s-apiserver" (include "netguard-chart.fullname" .)) $sa.name -}}
+{{- if not $sa.create }}
+{{- $saName = "default" -}}
+{{- end }}
+
+{{- if .Values.apiserver.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-apiserver
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "netguard-chart.fullname" . }}-apiserver
+subjects:
+  - kind: ServiceAccount
+    name: {{ $saName }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}

@@ -1,4 +1,5 @@
-{{- if .Values.webhookserver.autoscaling.enabled }}
+{{- if and .Values.webhookserver.enabled .Values.webhookserver.autoscaling.enabled }}
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
