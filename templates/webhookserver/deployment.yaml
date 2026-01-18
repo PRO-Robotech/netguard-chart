@@ -1,3 +1,14 @@
+{{ $webhookserver := .Values.webhookserver }}
+{{- $certSource     := .Values.tls.certSource -}}
+{{- $certSecretName := "" -}}
+{{- if eq $certSource "certmanager" }}
+{{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
+{{- else if eq $certSource "secret" }}
+{{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- end }}
+
+{{- if $webhookserver.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,8 +17,8 @@ metadata:
     app.kubernetes.io/component: webhookserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.webhookserver.autoscaling.enabled }}
-  replicas: {{ .Values.webhookserver.replicaCount }}
+  {{- if not $webhookserver.autoscaling.enabled }}
+  replicas: {{ $webhookserver.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -15,70 +26,96 @@ spec:
       {{- include "netguard-chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.webhookserver.podAnnotations }}
+      {{- with $webhookserver.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/component: webhookserver
         {{- include "netguard-chart.labels" . | nindent 8 }}
-        {{- with .Values.webhookserver.podLabels }}
+        {{- with $webhookserver.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.webhookserver.imagePullSecrets }}
+      {{- with $webhookserver.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "netguard-chart.serviceAccountName" . }}-webhookserver
-      {{- with .Values.webhookserver.podSecurityContext }}
+      {{- with $webhookserver.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: webhookserver
-          {{- with .Values.webhookserver.securityContext }}
+          {{- with $webhookserver.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.webhookserver.image.repository }}:{{ .Values.webhookserver.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.webhookserver.image.pullPolicy }}
+          image: "{{ $webhookserver.image.repository }}:{{ $webhookserver.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $webhookserver.image.pullPolicy }}
+          command:
+            - /netguard-webhook
+          {{- with $webhookserver.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.webhookserver.service.port }}
+              containerPort: {{ $webhookserver.service.ports.http }}
               protocol: TCP
-          {{- with .Values.webhookserver.livenessProbe }}
+          {{- with $webhookserver.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.webhookserver.readinessProbe }}
+          {{- with $webhookserver.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.webhookserver.resources }}
+          {{- with $webhookserver.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.webhookserver.volumeMounts }}
+          {{- with $webhookserver.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.webhookserver.volumes }}
+          volumeMounts:
+            - mountPath: /etc/netguard/config.yaml
+              name: configfile
+              subPath: client-config
+          {{- if $certSecretName }}
+            - mountPath: /etc/certs/
+              name: certificate
+          {{- end }}
+          {{- $webhookserver.volumeMounts | toYaml | nindent 12 }}
       volumes:
+        - name: configfile
+          configMap:
+            defaultMode: 420
+            name: {{ default (printf "%s-webhookserver-config" (include "netguard-chart.fullname" .)) $webhookserver.customConfigConfigMapName }}
+      {{- if $certSecretName }}
+        - name: certificate
+          secret:
+            defaultMode: 420
+            secretName: {{ $certSecretName }}
+      {{- end }}
+      {{- with $webhookserver.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.webhookserver.nodeSelector }}
+      {{- with $webhookserver.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.webhookserver.affinity }}
+      {{- with $webhookserver.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.webhookserver.tolerations }}
+      {{- with $webhookserver.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.webhookserver.priorityClassName }}
-      priorityClassName: "{{ .Values.webhookserver.priorityClassName }}"
+      {{- if $webhookserver.priorityClassName }}
+      priorityClassName: "{{ $webhookserver.priorityClassName }}"
       {{- end }}
+{{- end }}

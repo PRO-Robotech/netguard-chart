@@ -1,15 +1,16 @@
 {{- $config         := .Values.backend.config -}}
 {{- $authnConfig    := $config.authn -}}
-{{- $clientCa       := index $authnConfig.tls.client "ca-files" -}}
+{{- $clientCa       := index $authnConfig.tls.client "ca-files" | default list) -}}
 
 {{- if .Values.backend.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  labels:
-    {{- include "netguard-chart.labels" . | nindent 4 }}
   name: {{ include "netguard-chart.fullname" . }}-backend-config
+  labels:
+    app.kubernetes.io/component: backend
+    {{- include "netguard-chart.labels" . | nindent 4 }}
 data:
   client-config: |
     app:
@@ -28,25 +29,20 @@ data:
       # Type: tls, none.
       # "tls" - default value for kubernetes
       # "none" - disable tls
-    {{- if (eq .Values.tls.certSource "none") }}
+    {{- if or (eq .Values.tls.certSource "none") (eq $authnConfig.type "none") }}
       type: "none"
       tls:
         client:
           verify: "skip"
     {{- else }}
-      type: {{ $authnConfig.type | default "tls" }}
+      type: "tls"
       tls:
         cert-file: "/etc/certs/tls.crt"
         key-file: "/etc/certs/tls.key"
         client:
           # skip - for self-signed certs
           verify: {{ $authnConfig.tls.client.verify | default "skip" }}
-          {{- if $clientCa }}
-          ca-files:
-            {{ $clientCa | toYaml | nindent 12 }}
-          {{- else }}
-          ca-files: []
-          {{- end }}
+          ca-files: {{ $clientCa | toYaml }}
 
     sync:
       enabled: true
@@ -59,11 +55,15 @@ data:
           timeout: "15s"
           permit_without_stream: false
         tls:
+        {{- if or (eq .Values.tls.certSource "none") (eq $authnConfig.type "none") }}
+          enabled: false
+        {{- else }}
           enabled: true
           cert_file: "/etc/certs/tls.crt"
           key_file: "/etc/certs/tls.key"
-          ca_file: "/etc/certs/ca.crt"
-          insecure_skip_verify: true
+          ca_file: {{ index $clientCa 0 }}
+          insecure_skip_verify: {{ $authnConfig.tls.client.verify | default "skip" }}
+        {{- end }}
 
       retry:
         max_retries: 3
@@ -116,6 +116,5 @@ data:
         metrics_port: 8090
         graceful_shutdown_timeout: "30s"
         environment: "production"
-
     {{- end }}
 {{- end }}

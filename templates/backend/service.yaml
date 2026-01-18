@@ -5,6 +5,7 @@ kind: Service
 metadata:
   name: {{ include "netguard-chart.fullname" . }}-backend
   labels:
+    app.kubernetes.io/component: backend
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.backend.service.type }}

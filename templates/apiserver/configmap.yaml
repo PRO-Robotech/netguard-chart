@@ -5,16 +5,17 @@
   {{- $backendAddr    = backendConfig.endpoint -}}
 {{- end }}
 {{- $authnConfig    := $config.authn -}}
-{{- $clientCa       := index $authnConfig.tls.client "ca-files" -}}
+{{- $clientCa       := index $authnConfig.tls.client "ca-files" | default list) -}}
 
 {{- if .Values.apiserver.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  labels:
-    {{- include "netguard-chart.labels" . | nindent 4 }}
   name: {{ include "netguard-chart.fullname" . }}-apiserver-config
+  labels:
+    app.kubernetes.io/component: apiserver
+    {{- include "netguard-chart.labels" . | nindent 4 }}
 data:
   client-config: |
     bind_address:   "0.0.0.0"
@@ -64,11 +65,6 @@ data:
         client:
           # skip - for self-signed certs
           verify: {{ $authnConfig.tls.client.verify | default "skip" }}
-          {{- if $clientCa }}
-          ca-files:
-            {{ $clientCa | toYaml | nindent 12 }}
-          {{- else }}
-          ca-files: []
-          {{- end }}
+          ca-files: {{ $clientCa | toYaml }}
     {{- end }}
 {{- end }}

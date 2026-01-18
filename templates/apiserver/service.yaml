@@ -5,6 +5,7 @@ kind: Service
 metadata:
   name: {{ include "netguard-chart.fullname" . }}-apiserver
   labels:
+    app.kubernetes.io/component: apiserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.apiserver.service.type }}

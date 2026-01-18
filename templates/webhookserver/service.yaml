@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ include "netguard-chart.fullname" . }}-webhookserver
   labels:
+    app.kubernetes.io/component: webhookserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.webhookserver.service.type }}

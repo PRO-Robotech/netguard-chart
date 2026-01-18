@@ -1,0 +1,30 @@
+{{- if and .Values.apiserver.enabled (eq .Values.tls.certSource "certmanager") }}
+{{- $extIssuer    := .Values.tls.certmanager.existingIssuer -}}
+{{- $issuerKind   := "Issuer" -}}
+{{- $issuerName   := printf "%s-selfsigned-internal" (include "netguard-chart.fullname" .) -}}
+
+{{- if and $extIssuer.kind $extIssuer.name }}
+  {{- $issuerKind   = $extIssuer.kind -}}
+  {{- $issuerName   = $extIssuer.name -}}
+{{- end }}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-apiserver
+  labels:
+    app.kubernetes.io/component: apiserver
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+spec:
+  issuerRef:
+    group: cert-manager.io
+    kind: {{ $issuerKind }}
+    name: {{ $issuerName }}
+  dnsNames:
+    - "{{ include "netguard-chart.fullname" . }}-apiserver"
+    - "{{ include "netguard-chart.fullname" . }}-apiserver.{{ .Release.Namespace }}"
+    - "{{ include "netguard-chart.fullname" . }}-apiserver.{{ .Release.Namespace }}.svc"
+  commonName: "{{ .Release.Namespace }}-apiserver"
+  secretName: {{ include "netguard-chart.fullname" . }}-apiserver
+{{- end }}

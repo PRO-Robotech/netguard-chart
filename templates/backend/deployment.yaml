@@ -1,4 +1,11 @@
 {{ $backend := .Values.backend }}
+{{- $certSource     := .Values.tls.certSource -}}
+{{- $certSecretName := "" -}}
+{{- if eq $certSource "certmanager" }}
+{{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
+{{- else if eq $certSource "secret" }}
+{{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- end }}
 
 {{- if $backend.enabled }}
 ---
@@ -47,6 +54,14 @@ spec:
           {{- end }}
           image: "{{ $backend.image.repository }}:{{ $backend.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ $backend.image.pullPolicy }}
+          command:
+            - /server
+          args:
+            - --config=/etc/netguard/config.yaml
+            - --pg-uri=$(DATABASE_CONNECTION_URL)
+          envFrom:
+            - secretRef: 
+                name: "{{ include "netguard-chart.fullname" . }}-database"
           ports:
             - name: http
               containerPort: {{ $backend.service.ports.http }}
@@ -66,14 +81,27 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $backend.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+            - mountPath: /etc/netguard/config.yaml
+              name: configfile
+              subPath: client-config
+          {{- if $certSecretName }}
+            - mountPath: /etc/certs/
+              name: certificate
           {{- end }}
-      {{- with $backend.volumes }}
+          {{- $backend.volumeMounts | toYaml | nindent 12 }}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        - name: configfile
+          configMap:
+            defaultMode: 420
+            name: {{ default (printf "%s-backend-config" (include "netguard-chart.fullname" .)) $backend.customConfigConfigMapName }}
+      {{- if $certSecretName }}
+        - name: certificate
+          secret:
+            defaultMode: 420
+            secretName: {{ $certSecretName }}
       {{- end }}
+      {{- $backend.volumes | toYaml | nindent 8 }}
       {{- with $backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

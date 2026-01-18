@@ -1,4 +1,11 @@
-{{- $apiServer := .Values.apiserver -}}
+{{- $apiServer      := .Values.apiserver -}}
+{{- $certSource     := .Values.tls.certSource -}}
+{{- $certSecretName := "" -}}
+{{- if eq $certSource "certmanager" }}
+{{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
+{{- else if eq $certSource "secret" }}
+{{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- end }}
 
 {{- if $apiServer.enabled }}
 ---
@@ -49,8 +56,9 @@ spec:
           imagePullPolicy: {{ $apiServer.image.pullPolicy }}
           command:
             - /netguard-apiserver
+          args:
+            - --config=/etc/netguard/config.yaml
           # TODO: Убедится, что все эти параметры корректно задаются через конфиг
-          # args:
           #   - --bind-address=0.0.0.0
           #   - --secure-port=8443
           #   - --tls-cert-file=/etc/certs/tls.crt
@@ -74,33 +82,26 @@ spec:
           {{- end }}
           volumeMounts:
             - mountPath: /etc/netguard/config.yaml
-              name: apiserver-config
+              name: configfile
               subPath: client-config
-
-          {{- if (ne .Values.tls.certSource "none") }}
+          {{- if $certSecretName }}
             - mountPath: /etc/certs/
-              name: apiserver-certs
-              subPath: client-config
-
-
-
-            type: "none"
-            tls:
-              client:
-                verify: "skip"
+              name: certificate
           {{- end }}
-
-
-
-
           {{- with $apiServer.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        - name: apiserver-config
+        - name: configfile
           configMap:
             defaultMode: 420
             name: {{ default (printf "%s-apiserver-config" (include "netguard-chart.fullname" .)) $apiServer.customConfigConfigMapName }}
+      {{- if $certSecretName }}
+        - name: certificate
+          secret:
+            defaultMode: 420
+            secretName: {{ $certSecretName }}
+      {{- end }}
       {{- with $apiServer.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

@@ -1,0 +1,12 @@
+{{- if .Values.webhookserver.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "netguard-chart.fullname" . }}-webhookserver-config
+  labels:
+    app.kubernetes.io/component: webhookserver
+    {{- include "netguard-chart.labels" . | nindent 4 }}
+data:
+  client-config: ""
+{{- end }}
