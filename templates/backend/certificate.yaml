@@ -26,5 +26,10 @@ spec:
     - "{{ include "netguard-chart.fullname" . }}-backend.{{ .Release.Namespace }}"
     - "{{ include "netguard-chart.fullname" . }}-backend.{{ .Release.Namespace }}.svc"
   commonName: "{{ .Release.Namespace }}-backend"
+  usages:
+    - server auth
+    - client auth
+    - signing
+    - key encipherment
   secretName: {{ include "netguard-chart.fullname" . }}-backend
 {{- end }}
