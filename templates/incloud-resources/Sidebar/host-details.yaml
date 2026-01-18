@@ -1,0 +1,31 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Sidebar
+metadata:
+  name: stock-project-factory-host-details
+spec:
+  id: stock-project-factory-host-details
+  keysAndTags:
+    hbf-hosts:
+    - host-details
+  menuItems:
+    {{ include "netguard.web-resources.sidebar.menu.items.namespaced" . | nindent 4 }}
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Sidebar
+metadata:
+  name: stock-instance-factory-host-instance-details
+spec:
+  id: stock-instance-factory-host-instance-details
+  keysAndTags:
+    hbf-hosts:
+    - host-instance-details
+  menuItems:
+  {{ if .Values.webResources.namespaceNavigation }}
+    {{ include "netguard.web-resources.sidebar.menu.items.namespaced" . | nindent 4 }}
+  {{ else }}
+    {{ include "netguard.web-resources.sidebar.menu.items.instance" . | nindent 4 }}
+  {{ end }}
+{{ end }}

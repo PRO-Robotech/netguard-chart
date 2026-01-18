@@ -1,0 +1,29 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-project-factory-networkbinding-details
+spec:
+  id: "stock-project-factory-networkbinding-details"
+  breadcrumbItems:
+    - key: networkbindings
+      label: "netguard.sgroups.io/v1beta1/networkbindings"
+      link: "/openapi-ui/{cluster}/{namespace}/api-table/netguard.sgroups.io/v1beta1/networkbindings"
+    - key: networkbinding
+      label: "{9}"
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-instance-factory-networkbinding-instance-details
+spec:
+  id: "stock-instance-factory-networkbinding-instance-details"
+  breadcrumbItems:
+    - key: networkbindings
+      label: "netguard.sgroups.io/v1beta1/networkbindings"
+      link: "/openapi-ui/{cluster}/{namespace}/{syntheticProject}/api-table/netguard.sgroups.io/v1beta1/networkbindings"
+    - key: networkbinding
+      label: "{10}"
+{{ end }}

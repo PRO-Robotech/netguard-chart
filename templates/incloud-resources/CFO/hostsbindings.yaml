@@ -1,0 +1,114 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsOverride
+metadata:
+  name: netguard.sgroups.io.v1beta1.hostbindings
+spec:
+  hidden:
+    - - apiVersion
+    - - kind
+    - - status
+    - - networks
+    - - metadata
+      - creationTimestamp
+    - - metadata
+      - deletionGracePeriodSeconds
+    - - metadata
+      - deletionTimestamp
+    - - metadata
+      - finalizers
+    - - metadata
+      - generateName
+    - - metadata
+      - generation
+    - - metadata
+      - managedFields
+    - - metadata
+      - labels
+    - - metadata
+      - annotations
+    - - metadata
+      - ownerReferences
+    - - metadata
+      - resourceVersion
+    - - metadata
+      - selfLink
+    - - metadata
+      - uid
+    - - x-ipList
+    - - spec
+      - addressGroupRef
+      - apiVersion
+    - - spec
+      - addressGroupRef
+      - kind
+    - - spec
+      - addressGroupRef
+      - namespace
+    - - spec
+      - hostRef
+      - apiVersion
+    - - spec
+      - hostRef
+      - kind
+    - - spec
+      - hostRef
+      - namespace
+  customizationId: default-/netguard.sgroups.io/v1beta1/hostbindings
+  schema:
+    properties:
+      metadata:
+        properties:
+          namespace:
+            customProps:
+              keysToLabel:
+                {{ .Values.webResources.namespaceSelectorLabelPath | toYaml | nindent 16 }}
+              keysToValue:
+                - metadata
+                - name
+              valueUri: "{{ .Values.webResources.namespaceValueUri }}"
+            type: listInput
+        type: object
+      spec:
+        properties:
+          addressGroupRef:
+            type: object
+            properties:
+              name:
+                description: Name of the referenced object
+                type: listInput
+                customProps:
+                  keysToLabel:
+                    - metadata
+                    - name
+                  keysToValue:
+                    - metadata
+                    - name
+                  mode: tag
+                  valueUri: "/api/clusters/{cluster}/k8s/apis/netguard.sgroups.io/v1beta1/namespaces/{relatedFieldValue}/addressgroups"
+                  relatedValuePath: ".metadata.namespace"
+          hostRef:
+            type: object
+            properties:
+              name:
+                description: Name of the referenced object
+                type: listInput
+                customProps:
+                  criteria:
+                    keysToValue:
+                      - status
+                      - isBound
+                    type: equals
+                    value: false
+                  keysToLabel:
+                    - metadata
+                    - name
+                  keysToValue:
+                    - metadata
+                    - name
+                  mode: tag
+                  valueUri: "/api/clusters/{cluster}/k8s/apis/netguard.sgroups.io/v1beta1/namespaces/{relatedFieldValue}/hosts"
+                  relatedValuePath: ".metadata.namespace"
+  strategy: merge
+{{ end }}

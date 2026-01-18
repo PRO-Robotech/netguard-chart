@@ -1,0 +1,31 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Sidebar
+metadata:
+  name: stock-project-factory-network-details
+spec:
+  id: stock-project-factory-network-details
+  keysAndTags:
+    hbf-networks:
+    - network-details
+  menuItems:
+    {{ include "netguard.web-resources.sidebar.menu.items.namespaced" . | nindent 4 }}
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Sidebar
+metadata:
+  name: stock-instance-factory-network-instance-details
+spec:
+  id: stock-instance-factory-network-instance-details
+  keysAndTags:
+    hbf-networks:
+    - network-instance-details
+  menuItems:
+  {{ if .Values.webResources.namespaceNavigation }}
+    {{ include "netguard.web-resources.sidebar.menu.items.namespaced" . | nindent 4 }}
+  {{ else }}
+    {{ include "netguard.web-resources.sidebar.menu.items.instance" . | nindent 4 }}
+  {{ end }}
+{{ end }}

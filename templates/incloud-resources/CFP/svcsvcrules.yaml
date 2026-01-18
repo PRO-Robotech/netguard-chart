@@ -1,0 +1,28 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.svcsvcrules
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/svcsvcrules
+  values:
+    - path:
+        - metadata
+      value: 
+        generateName: dynamic-
+
+    - path:
+        - spec
+      value:
+        serviceFrom:
+          apiVersion: netguard.sgroups.io/v1beta1
+          kind: Service
+        serviceTo:
+          apiVersion: netguard.sgroups.io/v1beta1
+          kind: Service
+        description: Опишите доступ
+        # logs: false
+        trace: false
+        action: ACCEPT
+{{ end }}

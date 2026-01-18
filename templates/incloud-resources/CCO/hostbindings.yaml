@@ -1,0 +1,457 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-cluster-netguard.sgroups.io.v1beta1.hostbindings
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/hostbinding-details/{4}/{5}/{6}/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .metadata.namespace
+      name: Namespace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: Namespace
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/factory/namespace-details/v1/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}
+              id: name-link
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}"
+            {{ end }}
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: AG
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.addressGroupRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.addressGroupRef.namespace']['-']}/factory/addressgroup-details/{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: Host
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.hostRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.hostRef.namespace']['-']}/factory/host-details/{reqsJsonPath[0]['.spec.hostRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: AGRef
+      value: 63
+    - key: NetworkRef
+      value: 63
+  id: stock-cluster-/netguard.sgroups.io/v1beta1/hostbindings
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-namespace-netguard.sgroups.io.v1beta1.hostbindings
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/hostbinding-details/netguard.sgroups.io/v1beta1/hostbindings/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: AG
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.addressGroupRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.addressGroupRef.namespace']['-']}/factory/addressgroup-details/{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: Host
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.hostRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.hostRef.namespace']['-']}/factory/host-details/{reqsJsonPath[0]['.spec.hostRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: AGRef
+      value: 63
+    - key: NetworkRef
+      value: 63
+  id: stock-namespace-/netguard.sgroups.io/v1beta1/hostbindings
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-project-netguard.sgroups.io.v1beta1.hostbindings
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/hostbinding-details/netguard.sgroups.io/v1beta1/hostbindings/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: AG
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.addressGroupRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.addressGroupRef.namespace']['-']}/factory/addressgroup-details/{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: Host
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.hostRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.hostRef.namespace']['-']}/factory/host-details/{reqsJsonPath[0]['.spec.hostRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: AGRef
+      value: 63
+    - key: NetworkRef
+      value: 63
+  id: stock-project-/netguard.sgroups.io/v1beta1/hostbindings
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-instance-netguard.sgroups.io.v1beta1.hostbindings
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/{4}/factory/hostbinding-instance-details/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: AG
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.addressGroupRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.addressGroupRef.namespace']['-']}/{4}/factory/addressgroup-instance-details/{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.addressGroupRef.name']['-']}"
+
+    - jsonPath: .spec.addressGroupRef.name
+      name: Host
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: VisibilityContainer
+            data:
+              id: conditions-container
+              style:
+                margin: 0
+                padding: 0
+              value: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+            children:
+              - type: antdFlex  
+                data:
+                  align: center
+                  direction: row
+                  gap: 6
+                  id: resource-badge-link-row
+                children:
+                  - type: ResourceBadge
+                    data:
+                      id: example-resource-badge
+                      value: "{reqsJsonPath[0]['.spec.hostRef.kind']['-']}"
+                  - type: antdLink
+                    data:
+                      href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.hostRef.namespace']['-']}/{4}/factory/host-instance-details/{reqsJsonPath[0]['.spec.hostRef.name']['-']}
+                      id: name-link
+                      text: "{reqsJsonPath[0]['.spec.hostRef.name']['-']}"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: AGRef
+      value: 63
+    - key: NetworkRef
+      value: 63
+  id: stock-instance-/netguard.sgroups.io/v1beta1/hostbindings
+{{ end }}

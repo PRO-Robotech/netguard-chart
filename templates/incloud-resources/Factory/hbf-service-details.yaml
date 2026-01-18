@@ -1,0 +1,13 @@
+{{ if .Values.webResources.enabled }}
+{{ include "netguard.web-resources.factory.manifets.hbf-service-details" (dict
+  "key" "hbf-service-details"
+  "instanceMode" "false"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+
+{{ include "netguard.web-resources.factory.manifets.hbf-service-details" (dict
+  "key" "hbf-service-instance-details"
+  "instanceMode" "true"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+{{ end }}

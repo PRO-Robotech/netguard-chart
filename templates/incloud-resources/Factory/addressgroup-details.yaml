@@ -1,0 +1,13 @@
+{{ if .Values.webResources.enabled }}
+{{ include "netguard.web-resources.factory.manifets.addressgroup-details" (dict
+  "key" "addressgroup-details"
+  "instanceMode" "false"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+
+{{ include "netguard.web-resources.factory.manifets.addressgroup-details" (dict
+  "key" "addressgroup-instance-details"
+  "instanceMode" "true"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+{{ end }}

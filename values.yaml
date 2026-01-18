@@ -6,58 +6,6 @@
 nameOverride: ""
 fullnameOverride: ""
 
-# Database
-externalDatabase:
-  enabled: true
-  url: postgresql
-  port: 5432
-  database: netguard
-  username: netguard
-  password: netguard
-  sslmode: false
-
-postgresql:
-  enabled: false
-  image:
-    repository: bitnamilegacy/postgresql
-  global:
-    security:
-      allowInsecureImages: true
-
-# Certs for tls/mtls between services
-tls:
-  # There are three ways to provide tls
-  # 1) "certmanager" will generate cert automatically
-  # 2) "secret" internal certificates from secret
-  # 3) "none" no certificates
-  certSource: none
-  certmanager:
-    # existingIssuer
-    # if you want to use an existing issuer, you must specify:
-    # kind (Issuer or ClusterIssuer) and name
-    existingIssuer:
-      kind: Issuer
-      name: ""
-  secret:
-    # Each name of secret must contain keys named:
-    # "tls.crt" - the certificate
-    # "tls.key" - the private key
-
-    # apiserver related cert configuration
-    apiserver:
-      # secret name for apiserver's tls certs
-      secretName: ""
-
-    # backend related cert configuration
-    backend:
-      # secret name for backend's tls certs
-      secretName: ""
-
-    # webhookserver related cert configuration
-    webhookserver:
-      # secret name for webhookserver's tls certs
-      secretName: ""
-
 apiserver:
   enabled: true
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
@@ -458,3 +406,373 @@ webhookserver:
   affinity: {}
 
   priorityClassName: system-cluster-critical
+
+
+# Database
+externalDatabase:
+  enabled: true
+  url: postgresql
+  port: 5432
+  database: netguard
+  username: netguard
+  password: netguard
+  sslmode: false
+
+postgresql:
+  enabled: false
+  image:
+    repository: bitnamilegacy/postgresql
+  global:
+    security:
+      allowInsecureImages: true
+
+# Certs for tls/mtls between services
+tls:
+  # There are three ways to provide tls
+  # 1) "certmanager" will generate cert automatically
+  # 2) "secret" internal certificates from secret
+  # 3) "none" no certificates
+  certSource: none
+  certmanager:
+    # existingIssuer
+    # if you want to use an existing issuer, you must specify:
+    # kind (Issuer or ClusterIssuer) and name
+    existingIssuer:
+      kind: Issuer
+      name: ""
+  secret:
+    # Each name of secret must contain keys named:
+    # "tls.crt" - the certificate
+    # "tls.key" - the private key
+
+    # apiserver related cert configuration
+    apiserver:
+      # secret name for apiserver's tls certs
+      secretName: ""
+
+    # backend related cert configuration
+    backend:
+      # secret name for backend's tls certs
+      secretName: ""
+
+    # webhookserver related cert configuration
+    webhookserver:
+      # secret name for webhookserver's tls certs
+      secretName: ""
+
+webResources:
+  enabled: true
+  namespaceValueUri: /api/clusters/{cluster}/k8s/api/v1/namespaces
+  namespaceSelectorLabelPath:
+    - metadata
+    - name
+
+  # If you set display namespace alias, your NS must contain filed .metadata.labels.alias
+  displayNamespaceAlias: true
+
+  # Navigation mode selection for the In-Cloud interface
+  # true: Classic namespace-based navigation (Cluster/Namespace resources)
+  # false: Project/Instance based navigation (Project as parent resource, Instance as child resource)
+  # When using project/instance mode, instances create namespaces with matching names
+  namespaceNavigation: true
+
+  # Project resource configuration
+  # Defines the custom resource definition for Projects when using project/instance mode
+  projectResource:
+    deployWebResources: true
+    # API group for the Project custom resource
+    apiGroup: in-cloud.io
+    # API version for the Project custom resource
+    apiVersion: v1alpha1
+    # Plural resource name for the Project custom resource
+    resourceName: projects
+
+  # Instance resource configuration
+  # Defines the custom resource definition for Instances when using project/instance mode
+  # Instances are child resources of Projects and create corresponding namespaces
+  instanceResource:
+    deployWebResources: true
+    # API group for the Instance custom resource
+    apiGroup: in-cloud.io
+    # API version for the Instance custom resource
+    apiVersion: v1alpha1
+    # Plural resource name for the Instance custom resource
+    resourceName: instances
+
+  # Addons configuration
+  # Enable/disable and configure additional integrated tools and features
+  addons:
+    # ArgoCD - GitOps continuous delivery tool
+    # Provides management for Applications, ApplicationSets, and Projects
+    argocd:
+      enabled: false
+    # Trivy - Vulnerability scanner for container images
+    # Provides security scanning and reporting capabilities
+    trivy:
+      enabled: false
+    # Grafana - Monitoring and observability dashboard
+    # Provides links to monitoring infrastructure
+    grafana:
+      enabled: false
+
+  # Sidebar navigation configuration
+  # Controls the visibility and content of navigation sidebars at different hierarchy levels
+  sidebars:
+    # Namespaced-level sidebar (when namespace or project context is selected)
+    # Displays resources scoped to the selected namespace/project
+    namespaced:
+      # Configuration for custom sidebar navigation items
+      # customItems allows you to define additional sidebar sections with custom structure
+      #
+      # Each item should be structured as:
+      # - key: unique-identifier     # Unique key for the sidebar section
+      #   label: "Display Name"      # Display text (supports URL templating)
+      #   children:                  # Optional nested items array
+      #     - key: child-unique-id
+      #       label: "Child Name"
+      #       link: /openapi-ui/{cluster}/{namespace}/api-table/apiGroup/apiVersion/resourceName
+      #     - key: child-unique-id
+      #       label: "Child Name"
+      #       link: /openapi-ui/{2}/{3}/api-table/apiGroup/apiVersion/resourceName
+      # URL Templating in labels:
+      # Use {n} pattern to insert URL path segments, where n is the segment index (1-based)
+      # Example paths:
+      # /openapi-ui/cluster-name/namespace/builtin-table/pods
+      #   {1} = "openapi-ui", {2} = "cluster-name", {3} = "namespace", etc.
+      #   {cluster} = "cluster-name"
+      #   {namespace} = "namespace"
+      customItems: []
+
+      home:
+        enabled: true
+        items:
+          search: true
+          projects: false
+          instances: false
+
+      # ArgoCD resources within the namespace/project
+      argocd:
+        enabled: true
+        items:
+          applications: true
+          applicationset: true
+          appprojects: true
+        extraItems: []
+
+      # HBF resources within the namespace
+      hbf:
+        enabled: true
+        items:
+          hosts: true
+          networks: true
+          addressgroups: true
+          services: true
+          svcsvcrules: true
+          svcfqdnrules: true
+        extraItems: []
+
+      # HBF system resources within the namespace
+      hbfSystem:
+        enabled: true
+        items:
+          hostbindings: true
+          networkbindings: true
+          ieagagrules: true
+          servicealiases: true
+          addressgroupbindings: true
+          addressgroupportmappings: true
+        extraItems: []
+
+      # Workloads within the namespace
+      workloads:
+        enabled: true
+        items:
+          pods: true
+          deployments: true
+          statefulsets: true
+          secrets: true
+          configmaps: true
+          cronjobs: true
+          jobs: true
+          daemonsets: true
+          replicasets: true
+          replicationcontrollers: true
+          horizontalpodautoscalers: true
+          poddisruptionbudgets: true
+        extraItems: []
+
+      # Networking within the namespace
+      networking:
+        enabled: true
+        items:
+          services: true
+          networkpolicies: true
+          ingresses: true
+        extraItems: []
+
+      # Storage resources within the namespace
+      storage:
+        enabled: true
+        items:
+          persistentvolumes: true
+          persistentvolumeclaims: true  # Namespace-scoped PVCs
+          storageclasses: true
+        extraItems: []
+
+      # Compute resources (typically cluster-scoped, but visible in context)
+      compute:
+        enabled: true
+        items:
+          nodes: true
+        extraItems: []
+
+      # User management within the namespace
+      usermanagement:
+        enabled: true
+        items:
+          serviceaccounts: true  # Namespace-scoped service accounts
+          roles: true  # Namespace-scoped roles
+          rolebindings: true  # Namespace-scoped role bindings
+          clusterroles: true  # Cluster-wide roles (visible in context)
+          clusterrolebindings: true  # Cluster-wide bindings (visible in context)
+        extraItems: []
+
+      # Administration within the namespace
+      administration:
+        enabled: true
+        items:
+          namespaces: true  # Current namespace management
+          limitranges: true  # Namespace resource limits
+          resourcequotas: true  # Namespace resource quotas
+          customresourcedefinitions: true  # CRDs (cluster-wide but visible)
+        extraItems: []
+
+    # Instance-level sidebar (when instance context is selected)
+    # Displays resources specific to the selected instance and its namespace
+    instance:
+      # Configuration for custom sidebar navigation items
+      # customItems allows you to define additional sidebar sections with custom structure
+      #
+      # Each item should be structured as:
+      # - key: unique-identifier     # Unique key for the sidebar section
+      #   label: "Display Name"      # Display text (supports URL templating)
+      #   children:                  # Optional nested items array
+      #     - key: child-unique-id
+      #       label: "Child Name"
+      #       link: /openapi-ui/{cluster}/{namespace}/{syntheticProject}/api-table/apiGroup/apiVersion/resourceName
+      #     - key: child-unique-id
+      #       label: "Child Name"
+      #       link: /openapi-ui/{2}/{3}/{4}/api-table/apiGroup/apiVersion/resourceName
+      # URL Templating in labels:
+      # Use {n} pattern to insert URL path segments, where n is the segment index (1-based)
+      # Example paths:
+      # /openapi-ui/cluster-name/namespace/project-name/builtin-table/pods
+      #   {1} = "openapi-ui", {2} = "cluster-name", {3} = "namespace", etc.
+      #   {cluster} = "cluster-name"
+      #   {namespace} = "namespace"
+      #   {syntheticProject} = "project-name"
+      customItems: []
+
+      home:
+        enabled: true
+        items:
+          search: true
+          projects: false
+          instances: false
+
+      # ArgoCD resources for the instance
+      argocd:
+        enabled: true
+        items:
+          applications: true
+          applicationset: true
+          appprojects: true
+        extraItems: []
+
+      # HBF resources for the instance
+      hbf:
+        enabled: true
+        items:
+          hosts: true
+          networks: true
+          addressgroups: true
+          services: true
+          svcsvcrules: true
+          svcfqdnrules: true
+        extraItems: []
+
+      # HBF system resources for the instance
+      hbfSystem:
+        enabled: true
+        items:
+          hostbindings: true
+          networkbindings: true
+          ieagagrules: true
+          servicealiases: true
+          addressgroupbindings: true
+          addressgroupportmappings: true
+        extraItems: []
+
+      # Workloads within the instance namespace
+      workloads:
+        enabled: true
+        items:
+          pods: true
+          deployments: true
+          statefulsets: true
+          secrets: true
+          configmaps: true
+          cronjobs: true
+          jobs: true
+          daemonsets: true
+          replicasets: true
+          replicationcontrollers: true
+          horizontalpodautoscalers: true
+          poddisruptionbudgets: true
+        extraItems: []
+
+      # Networking within the instance namespace
+      networking:
+        enabled: true
+        items:
+          services: true
+          networkpolicies: true
+          ingresses: true
+        extraItems: []
+
+      # Storage resources for the instance
+      storage:
+        enabled: true
+        items:
+          persistentvolumes: true  # Typically cluster-scoped
+          persistentvolumeclaims: true  # Instance namespace PVCs
+          storageclasses: true  # Typically cluster-scoped
+        extraItems: []
+
+      # Compute resources (cluster-scoped but visible)
+      compute:
+        enabled: true
+        items:
+          nodes: true
+        extraItems: []
+
+      # User management for the instance namespace
+      usermanagement:
+        enabled: true
+        items:
+          serviceaccounts: true  # Instance namespace service accounts
+          roles: true  # Instance namespace roles
+          rolebindings: true  # Instance namespace role bindings
+          clusterroles: true  # Typically not instance-scoped
+          clusterrolebindings: true  # Typically not instance-scoped
+        extraItems: []
+
+      # Administration for the instance namespace
+      administration:
+        enabled: true
+        items:
+          namespaces: true  # Instance uses existing namespace
+          limitranges: true  # Instance namespace limits
+          resourcequotas: true  # Instance namespace quotas
+          customresourcedefinitions: true  # Typically cluster-scoped
+        extraItems: []

@@ -1,0 +1,681 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-cluster-netguard.sgroups.io.v1beta1.svcfqdnrules
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/svcfqdnrule-details/netguard.sgroups.io/v1beta1/svcfqdnrules/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.serviceFrom.name
+      name: ServiceFrom
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.spec.serviceFrom.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.serviceFrom.namespace']['-']}/factory/base-factory-namespaced-api/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+              id: meta-name-value
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}"
+            {{ end }}
+
+    - jsonPath: .spec.fqdn
+      name: FQDN
+      type: string
+
+    - jsonPath: .spec.ports[*].port
+      name: Ports
+      type: array
+
+    - jsonPath: .spec.transport
+      name: Protocol
+      type: string
+
+    - jsonPath: .spec.action
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.action']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.action']}"
+              errorText:    "{reqsJsonPath[0]['.spec.action']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.action']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: ServiceLocal
+      value: 63
+    - key: Service
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: ServiceFrom
+      value: "-"
+    - key: ServiceTo
+      value: "-"
+    - key: Logs
+      value: 'false'
+    - key: Trace
+      value: 'false'
+    - key: Description
+      value: "-"
+    - key: Ready
+      value: "-"
+  id: stock-cluster-/netguard.sgroups.io/v1beta1/svcfqdnrules
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-namespace-netguard.sgroups.io.v1beta1.svcfqdnrules
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/svcfqdnrule-details/netguard.sgroups.io/v1beta1/svcfqdnrules/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.serviceFrom.name
+      name: ServiceFrom
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.spec.serviceFrom.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.serviceFrom.namespace']['-']}/factory/hbf-service-details/netguard.sgroups.io/v1beta1/services/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+              id: meta-name-value
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}"
+            {{ end }}
+
+    - jsonPath: .spec.fqdn
+      name: FQDN
+      type: string
+
+    - jsonPath: .spec.ports[*].port
+      name: Ports
+      type: array
+
+    - jsonPath: .spec.transport
+      name: Protocol
+      type: string
+
+    - jsonPath: .spec.action
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.action']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.action']}"
+              errorText:    "{reqsJsonPath[0]['.spec.action']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.action']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: ServiceLocal
+      value: 63
+    - key: Service
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: ServiceFrom
+      value: "-"
+    - key: ServiceTo
+      value: "-"
+    - key: Logs
+      value: 'false'
+    - key: Trace
+      value: 'false'
+    - key: Description
+      value: "-"
+    - key: Ready
+      value: "-"
+  id: stock-namespace-/netguard.sgroups.io/v1beta1/svcfqdnrules
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-project-netguard.sgroups.io.v1beta1.svcfqdnrules
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/svcfqdnrule-details/netguard.sgroups.io/v1beta1/svcfqdnrules/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.serviceFrom.name
+      name: ServiceFrom
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.spec.serviceFrom.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.serviceFrom.namespace']['-']}/factory/hbf-service-details/netguard.sgroups.io/v1beta1/services/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+              id: meta-name-value
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}"
+            {{ end }}
+
+    - jsonPath: .spec.fqdn
+      name: FQDN
+      type: string
+
+    - jsonPath: .spec.ports[*].port
+      name: Ports
+      type: array
+
+    - jsonPath: .spec.transport
+      name: Protocol
+      type: string
+
+    - jsonPath: .spec.action
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.action']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.action']}"
+              errorText:    "{reqsJsonPath[0]['.spec.action']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.action']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: ServiceLocal
+      value: 63
+    - key: Service
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: ServiceFrom
+      value: "-"
+    - key: ServiceTo
+      value: "-"
+    - key: Logs
+      value: 'false'
+    - key: Trace
+      value: 'false'
+    - key: Description
+      value: "-"
+    - key: Ready
+      value: "-"
+  id: stock-project-/netguard.sgroups.io/v1beta1/svcfqdnrules
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-instance-netguard.sgroups.io.v1beta1.svcfqdnrules
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/{4}/factory/svcfqdnrule-instance-details/netguard.sgroups.io/v1beta1/svcfqdnrules/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: meta-name-value
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+              style:
+                width: "100px"
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+
+    - jsonPath: .spec.serviceFrom.name
+      name: ServiceFrom
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.spec.serviceFrom.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.spec.serviceFrom.namespace']['-']}/factory/hbf-service-details/netguard.sgroups.io/v1beta1/services/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+              id: meta-name-value
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}/{reqsJsonPath[0]['.spec.serviceFrom.name']['-']}"
+            {{ end }}
+
+    - jsonPath: .spec.fqdn
+      name: FQDN
+      type: string
+
+    - jsonPath: .spec.ports[*].port
+      name: Ports
+      type: array
+
+    - jsonPath: .spec.transport
+      name: Protocol
+      type: string
+
+    - jsonPath: .spec.action
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.action']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.action']}"
+              errorText:    "{reqsJsonPath[0]['.spec.action']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.action']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: ServiceLocal
+      value: 63
+    - key: Service
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: ServiceFrom
+      value: "-"
+    - key: ServiceTo
+      value: "-"
+    - key: Logs
+      value: 'false'
+    - key: Trace
+      value: 'false'
+    - key: Description
+      value: "-"
+    - key: Ready
+      value: "-"
+  id: stock-instance-/netguard.sgroups.io/v1beta1/svcfqdnrules
+{{ end }}

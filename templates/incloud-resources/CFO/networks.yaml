@@ -1,0 +1,56 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsOverride
+metadata:
+  name: netguard.sgroups.io.v1beta1.networks
+spec:
+  hidden:
+    - - apiVersion
+    - - kind
+    - - status
+    - - networks
+    - - metadata
+      - creationTimestamp
+    - - metadata
+      - deletionGracePeriodSeconds
+    - - metadata
+      - deletionTimestamp
+    - - metadata
+      - finalizers
+    - - metadata
+      - generateName
+    - - metadata
+      - generation
+    - - metadata
+      - managedFields
+    - - metadata
+      - labels
+    - - metadata
+      - annotations
+    - - metadata
+      - ownerReferences
+    - - metadata
+      - resourceVersion
+    - - metadata
+      - selfLink
+    - - metadata
+      - uid
+  customizationId: default-/netguard.sgroups.io/v1beta1/networks
+  schema:
+    properties:
+      metadata:
+        properties:
+          namespace:
+            customProps:
+              keysToLabel:
+                {{ .Values.webResources.namespaceSelectorLabelPath | toYaml | nindent 16 }}
+              keysToValue:
+                - metadata
+                - name
+              valueUri: "{{ .Values.webResources.namespaceValueUri }}"
+            type: listInput
+        type: object
+    type: object
+  strategy: merge
+{{ end }}

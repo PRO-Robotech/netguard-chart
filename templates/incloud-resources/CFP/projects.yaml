@@ -1,0 +1,32 @@
+{{ $projectResource := .Values.webResources.projectResource }}
+
+{{ if ($projectResource.deployWebResources) }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: default-projects
+spec:
+  customizationId: "default-/{{ $projectResource.apiGroup }}/{{ $projectResource.apiVersion }}/{{ $projectResource.resourceName }}"
+  values:
+    - path:
+        - metadata
+        - name
+      value: example
+    - path:
+        - spec
+        - businessName
+      value: Business name
+    - path:
+        - spec
+        - description
+      value: Project description
+    - path:
+        - spec
+        - prefix
+      value: prefix
+    - path:
+        - spec
+        - alias
+      value: Project alias
+{{ end }}

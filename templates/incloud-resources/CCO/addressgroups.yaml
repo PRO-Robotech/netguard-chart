@@ -1,0 +1,753 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-cluster-netguard.sgroups.io.v1beta1.addressgroups
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/addressgroup-details/netguard.sgroups.io/v1beta1/addressgroups/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+
+    - jsonPath: .metadata.namespace
+      name: Namespace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: Namespace
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/factory/namespace-details/v1/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}
+              id: name-link
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.metadata.namespace']['-']}"
+            {{ end }}
+
+    - jsonPath: .networks[*].cidr
+      name: Networks
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".networks"
+              forcedRelatedValuePath: "./cidr"
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .xAggregatedHosts[*].ref.name
+      name: Hosts
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".xAggregatedHosts[*].ref"
+
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .spec.defaultAction
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.defaultAction']}"
+              errorText:    "{reqsJsonPath[0]['.spec.defaultAction']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{4}/{5}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{6}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Networks
+      value: 2
+    - key: Hosts
+      value: 2
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: Networks
+      value: "-"
+    - key: Action
+      value: "-"
+    - key: Trace
+      value: "-"
+    - key: Logs
+      value: "-"
+    - key: Ready
+      value: "-"
+    - key: Description
+      value: "-"
+  id: stock-cluster-/netguard.sgroups.io/v1beta1/addressgroups
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-namespace-netguard.sgroups.io.v1beta1.addressgroups
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/addressgroup-details/netguard.sgroups.io/v1beta1/addressgroups/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+
+    - jsonPath: .networks[*].cidr
+      name: Networks
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".networks"
+              forcedRelatedValuePath: "./cidr"
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .xAggregatedHosts[*].ref.name
+      name: Hosts
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".xAggregatedHosts[*].ref"
+
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .spec.defaultAction
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.defaultAction']}"
+              errorText:    "{reqsJsonPath[0]['.spec.defaultAction']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Networks
+      value: 2
+    - key: Hosts
+      value: 2
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: Networks
+      value: "-"
+    - key: Action
+      value: "-"
+    - key: Trace
+      value: "-"
+    - key: Logs
+      value: "-"
+    - key: Ready
+      value: "-"
+    - key: Description
+      value: "-"
+  id: stock-namespace-/netguard.sgroups.io/v1beta1/addressgroups
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-project-netguard.sgroups.io.v1beta1.addressgroups
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/factory/addressgroup-details/netguard.sgroups.io/v1beta1/addressgroups/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+
+    - jsonPath: .networks[*].cidr
+      name: Networks
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".networks"
+              forcedRelatedValuePath: "./cidr"
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .xAggregatedHosts[*].ref.name
+      name: Hosts
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".xAggregatedHosts[*].ref"
+
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .spec.defaultAction
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.defaultAction']}"
+              errorText:    "{reqsJsonPath[0]['.spec.defaultAction']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{5}/{6}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{7}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Networks
+      value: 2
+    - key: Hosts
+      value: 2
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: Networks
+      value: "-"
+    - key: Action
+      value: "-"
+    - key: Trace
+      value: "-"
+    - key: Logs
+      value: "-"
+    - key: Ready
+      value: "-"
+    - key: Description
+      value: "-"
+  id: stock-project-/netguard.sgroups.io/v1beta1/addressgroups
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-instance-netguard.sgroups.io.v1beta1.addressgroups
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .metadata.name
+      name: Name
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.metadata.namespace']['-']}/{4}/factory/addressgroup-instance-details/netguard.sgroups.io/v1beta1/addressgroups/{reqsJsonPath[0]['.metadata.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.metadata.name']['-']}"
+
+    - jsonPath: .networks[*].cidr
+      name: Networks
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".networks"
+              forcedRelatedValuePath: "./cidr"
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .xAggregatedHosts[*].ref.name
+      name: Hosts
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: OwnerRefs
+            data:
+              id: refs
+              baseprefix: /openapi-ui
+              cluster: '{2}'
+              # forcedNamespace: '{3}'
+              reqIndex: 0
+              jsonPathToArrayOfRefs: ".xAggregatedHosts[*].ref"
+
+              errorText: error getting refs
+              notArrayErrorText: refs on path are not arr
+              emptyArrayErrorText: "-"
+              isNotRefsArrayErrorText: objects in arr are not refs
+
+              baseFactoryClusterSceopedAPIKey: base-factory-clusterscoped-api
+              baseFactoryClusterSceopedBuiltinKey: base-factory-clusterscoped-builtin
+              baseFactoryNamespacedAPIKey: base-factory-namespaced-api
+              baseFactoryNamespacedBuiltinKey: base-factory-namespaced-builtin
+              baseNamespaceFactoryKey: namespace-details
+              baseNavigationPlural: navigations
+              baseNavigationName: navigation-hbf-netguard
+
+    - jsonPath: .spec.defaultAction
+      name: Action
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: StatusText
+            data:
+              id: pod-status
+              values:
+                - "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+              criteriaSuccess: equals
+              stategySuccess: every
+              valueToCompareSuccess:
+                - "ACCEPT"
+
+              criteriaError: equals
+              strategyError: every
+              valueToCompareError:
+                - "DROP"
+
+              # --- Output text rendering ----------------------------------------------
+              successText:  "{reqsJsonPath[0]['.spec.defaultAction']}"
+              errorText:    "{reqsJsonPath[0]['.spec.defaultAction']}"
+              fallbackText: "{reqsJsonPath[0]['.spec.defaultAction']}"
+
+    - jsonPath: .spec.trace
+      name: Trace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: Toggler
+          data:
+            id: toggler-boolean
+            reqIndex: 0
+            jsonPathToValue: ".spec.trace"
+            criteria:
+              type: "forSuccess"
+              operator: "equals"
+              valueToCompare: "true"
+            notificationSuccessMessage: Updated successfully
+            notificationSuccessMessageDescription: Boolean toggler has been updated
+            notificationErrorMessage: Update error
+            notificationErrorMessageDescription: Boolean toggler has not been updated
+            endpoint: /api/clusters/{2}/k8s/apis/{6}/{7}/namespaces/{reqsJsonPath[0]['.metadata.namespace']['-']}/{8}/{reqsJsonPath[0]['.metadata.name']['-']}
+            pathToValue: /spec/trace
+            valueToSubmit:
+              onValue: true
+              offValue: false
+
+    - name: Description
+      jsonPath: .spec.description
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+          - type: parsedText
+            data:
+              id: name-postfix
+              text: '{reqsJsonPath[0][".spec.description"]["-"]}'
+              style:
+                display: block
+                width: "300px"
+
+    - jsonPath: .status.conditions[?(@.type=="Ready")].status
+      name: Ready
+      type: bool
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Networks
+      value: 2
+    - key: Hosts
+      value: 2
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+    - key: Networks
+      value: "-"
+    - key: Action
+      value: "-"
+    - key: Trace
+      value: "-"
+    - key: Logs
+      value: "-"
+    - key: Ready
+      value: "-"
+    - key: Description
+      value: "-"
+  id: stock-instance-/netguard.sgroups.io/v1beta1/addressgroups
+{{ end }}

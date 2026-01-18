@@ -1,0 +1,53 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Sidebar
+metadata:
+  name: fallback-hbf-clusterscoped
+spec:
+  id: fallback-hbf
+  keysAndTags:
+    hbf-hosts:
+      - hosts
+      - host-details
+      - netguard.sgroups.io/v1beta1/hosts
+    hbf-addressgroups:
+      - addressgroups
+      - addressgroup-details
+      - netguard.sgroups.io/v1beta1/addressgroups
+    hbf-addressgroupbindings:
+      - addressgroupbindings
+      - addressgroupbinding-details
+      - netguard.sgroups.io/v1beta1/addressgroupbindings
+    hbf-services:
+      - services
+      - hbf-service-details
+      - netguard.sgroups.io/v1beta1/services
+    hbf-hostbindings:
+      - hostbindings
+      - hostbinding-details
+      - netguard.sgroups.io/v1beta1/hostbindings
+    hbf-networks:
+      - networks
+      - network-details
+      - netguard.sgroups.io/v1beta1/networks
+    hbf-networkbindings:
+      - networkbindings
+      - networkbinding-details
+      - netguard.sgroups.io/v1beta1/networkbindings
+    hbf-svcfqdnrules:
+      - svcfqdnrules
+      - svcfqdnrule-details
+      - netguard.sgroups.io/v1beta1/svcfqdnrules
+    hbf-svcsvcrules:
+      - svcsvcrules
+      - svcsvcrule-details
+      - netguard.sgroups.io/v1beta1/svcsvcrules
+    hbf-addressgroupportmappings:
+      - addressgroupportmappings
+      - addressgroupportmapping-details
+      - netguard.sgroups.io/v1beta1/addressgroupportmappings
+  menuItems:
+    {{ include "netguard.web-resources.sidebar.menu.items.clusterscope" . | nindent 4 }}
+
+{{ end }}

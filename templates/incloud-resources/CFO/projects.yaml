@@ -1,0 +1,69 @@
+{{ $projectResource := .Values.webResources.projectResource }}
+
+{{ if ($projectResource.deployWebResources) }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsOverride
+metadata:
+  name: default-projects
+spec:
+  customizationId: "default-/{{ $projectResource.apiGroup }}/{{ $projectResource.apiVersion }}/{{ $projectResource.resourceName }}"
+  hidden:
+    - - apiVersion
+    - - kind
+    - - status
+    - - spec
+      - claimRef
+    - - spec
+      - compositeDeletePolicy
+    - - spec
+      - publishConnectionDetailsTo
+    - - spec
+      - compositionRef
+    - - spec
+      - resourceRefs
+    - - spec
+      - compositionRevisionRef
+    - - spec
+      - compositionRevisionSelector
+    - - spec
+      - compositionSelector
+    - - spec
+      - compositionUpdatePolicy
+    - - spec
+      - resourceRef
+    - - spec
+      - writeConnectionSecretToRef
+    - - spec
+      - state
+    - - metadata
+      - creationTimestamp
+    - - metadata
+      - namespace
+    - - metadata
+      - deletionGracePeriodSeconds
+    - - metadata
+      - deletionTimestamp
+    - - metadata
+      - finalizers
+    - - metadata
+      - generateName
+    - - metadata
+      - generation
+    - - metadata
+      - managedFields
+    - - metadata
+      - labels
+    - - metadata
+      - annotations
+    - - metadata
+      - ownerReferences
+    - - metadata
+      - resourceVersion
+    - - metadata
+      - selfLink
+    - - metadata
+      - uid
+  schema: {}
+  strategy: merge
+{{ end }}

@@ -1,0 +1,24 @@
+{{ $instanceResource := .Values.webResources.instanceResource }}
+
+{{ if ($instanceResource.deployWebResources) }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: default-instances
+spec:
+  customizationId: "default-/{{ $instanceResource.apiGroup }}/{{ $instanceResource.apiVersion }}/{{ $instanceResource.resourceName }}"
+  values:
+    - path:
+        - metadata
+        - name
+      value: example
+    - path:
+        - spec
+        - description
+      value: Instance description
+    - path:
+        - spec
+        - alias
+      value: Instance alias
+{{ end }}

@@ -1,0 +1,29 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-project-factory-addressgroup-details
+spec:
+  id: "stock-project-factory-addressgroup-details"
+  breadcrumbItems:
+    - key: addressgroups
+      label: "netguard.sgroups.io/v1beta1/addressgroups"
+      link: "/openapi-ui/{cluster}/{namespace}/api-table/netguard.sgroups.io/v1beta1/addressgroups"
+    - key: addressgroup
+      label: "{9}"
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-instance-factory-addressgroup-instance-details
+spec:
+  id: "stock-instance-factory-addressgroup-instance-details"
+  breadcrumbItems:
+    - key: addressgroups
+      label: "netguard.sgroups.io/v1beta1/addressgroups"
+      link: "/openapi-ui/{cluster}/{namespace}/{syntheticProject}/api-table/netguard.sgroups.io/v1beta1/addressgroups"
+    - key: addressgroup
+      label: "{10}"
+{{ end }}

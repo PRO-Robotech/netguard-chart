@@ -1,0 +1,13 @@
+{{ if .Values.webResources.enabled }}
+{{ include "netguard.web-resources.factory.manifets.hostbinding-details" (dict
+  "key" "hostbinding-details"
+  "instanceMode" "false"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+
+{{ include "netguard.web-resources.factory.manifets.hostbinding-details" (dict
+  "key" "hostbinding-instance-details"
+  "instanceMode" "true"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+{{ end }}

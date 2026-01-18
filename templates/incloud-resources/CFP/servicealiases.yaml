@@ -1,0 +1,21 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.servicealiases
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/servicealiases
+  values:
+    - path:
+        - metadata
+      value: 
+        name: example
+
+    - path:
+        - spec
+      value:
+        serviceRef:
+          apiVersion: netguard.sgroups.io/v1beta1
+          kind: Service
+{{ end }}

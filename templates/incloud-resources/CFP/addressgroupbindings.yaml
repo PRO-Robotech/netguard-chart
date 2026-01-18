@@ -1,0 +1,23 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.addressgroupbindings
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/addressgroupbindings
+  values:
+    - path:
+        - metadata
+      value: 
+        generateName: dynamic-
+    - path:
+        - spec
+      value:
+        addressGroupRef:
+          apiVersion: netguard.sgroups.io/v1beta1
+          kind: AddressGroup
+        serviceRef:
+          apiVersion: netguard.sgroups.io/v1beta1
+          kind: Service
+{{ end }}

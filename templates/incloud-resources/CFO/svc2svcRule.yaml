@@ -1,0 +1,117 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsOverride
+metadata:
+  name: netguard.sgroups.io.v1beta1.svcsvcrules
+spec:
+  hidden:
+    - - apiVersion
+    - - kind
+    - - status
+    - - networks
+    - - metadata
+      - creationTimestamp
+    - - metadata
+      - deletionGracePeriodSeconds
+    - - metadata
+      - deletionTimestamp
+    - - metadata
+      - finalizers
+    - - metadata
+      - generateName
+    - - metadata
+      - generation
+    - - metadata
+      - managedFields
+    - - metadata
+      - labels
+    - - metadata
+      - annotations
+    - - metadata
+      - ownerReferences
+    - - metadata
+      - resourceVersion
+    - - metadata
+      - selfLink
+    - - metadata
+      - uid
+    - - spec
+      - serviceFrom
+      - apiVersion
+    - - spec
+      - serviceFrom
+      - kind
+    - - spec
+      - serviceTo
+      - kind
+    - - spec
+      - serviceFrom
+      - namespace
+    - - spec
+      - serviceTo
+      - apiVersion
+    - - spec
+      - priority
+    - - spec
+      - logs
+
+  customizationId: default-/netguard.sgroups.io/v1beta1/svcsvcrules
+  schema:
+    properties:
+      metadata:
+        properties:
+          namespace:
+            customProps:
+              keysToLabel:
+                {{ .Values.webResources.namespaceSelectorLabelPath | toYaml | nindent 16 }}
+              keysToValue:
+                - metadata
+                - name
+              valueUri: "{{ .Values.webResources.namespaceValueUri }}"
+            type: listInput
+        type: object
+      spec:
+        properties:
+          serviceFrom:
+            type: object
+            properties:
+              name:
+                customProps:
+                  keysToLabel:
+                    - metadata
+                    - name
+                  keysToValue:
+                    - metadata
+                    - name
+                  mode: tag
+                  valueUri: /api/clusters/{cluster}/k8s/apis/netguard.sgroups.io/v1beta1/namespaces/{relatedFieldValue}/services
+                  relatedValuePath: ".metadata.namespace"
+                type: listInput
+          serviceTo:
+            type: object
+            properties:
+              name:
+                customProps:
+                  keysToLabel:
+                    - metadata
+                    - name
+                  keysToValue:
+                    - metadata
+                    - name
+                  mode: tag
+                  valueUri: /api/clusters/{cluster}/k8s/apis/netguard.sgroups.io/v1beta1/namespaces/{relatedFieldValue}/services
+                  relatedValuePath: "./namespace"
+                type: listInput
+              namespace:
+                customProps:
+                  keysToLabel:
+                    {{ .Values.webResources.namespaceSelectorLabelPath | toYaml | nindent 20 }}
+                  keysToValue:
+                    - metadata
+                    - name
+                  mode: tag
+                  valueUri: "{{ .Values.webResources.namespaceValueUri }}"
+                type: listInput
+  strategy: merge
+{{ end }}

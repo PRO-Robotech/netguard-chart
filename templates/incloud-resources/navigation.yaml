@@ -1,0 +1,48 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Navigation
+metadata:
+  name: navigation-hbf-netguard
+spec:
+  namespaces:
+    clear: "/openapi-ui/{selectedCluster}/api-table/in-cloud.io/v1alpha1/instances"
+    change: "/openapi-ui/{selectedCluster}/{value}/api-table/netguard.sgroups.io/v1beta1/addressgroups"
+    aliasPath: "{reqsJsonPath[0]['.status.projectAlias']['-']}/{reqsJsonPath[0]['.spec.alias']}"
+  instances:
+    clear: "/openapi-ui/{selectedCluster}/builtin-table/pods?resources=metrics.k8s.io/v1beta1/pods"
+    change: "/openapi-ui/{selectedCluster}/{value}/builtin-table/pods?resources=metrics.k8s.io/v1beta1/pods"
+    aliasPath: "{reqsJsonPath[0]['.metadata.name']}"
+    mapOptionsPattern: "{reqsJsonPath[0]['.metadata.name']}"
+
+  baseFactoriesMapping:
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-hosts: host-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-hosts: host-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-networks: network-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-networks: network-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-addressgroups: addressgroup-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-addressgroups: addressgroup-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-services: service-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-services: service-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-svcsvcrules: svcsvcrule-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-svcsvcrules: svcsvcrule-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-svcfqdnrules: svcfqdnrule-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-svcfqdnrules: svcfqdnrule-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-hostbindings: hostbinding-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-hostbindings: hostbinding-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-networkbindings: networkbinding-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-networkbindings: networkbinding-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-addressgroupbindings: addressgroupbinding-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-addressgroupbindings: addressgroupbinding-details
+
+    base-factory-clusterscoped-netguard.sgroups.io-v1beta1-addressgroupportmappings: addressgroupportmapping-details
+    base-factory-namespaced-api-netguard.sgroups.io-v1beta1-addressgroupportmappings: addressgroupportmapping-details
+{{ end }}

@@ -1,0 +1,18 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.networks
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/networks
+  values:
+    - path:
+        - metadata
+      value: 
+        generateName: dynamic-
+    - path:
+        - spec
+      value:
+        cidr: 1.1.1.1/32
+{{ end }}

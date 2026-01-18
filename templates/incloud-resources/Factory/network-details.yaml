@@ -1,0 +1,13 @@
+{{ if .Values.webResources.enabled }}
+{{ include "netguard.web-resources.factory.manifets.network-details" (dict
+  "key" "network-details"
+  "instanceMode" "false"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+
+{{ include "netguard.web-resources.factory.manifets.network-details" (dict
+  "key" "network-instance-details"
+  "instanceMode" "true"
+  "nsAliasMode" .Values.webResources.displayNamespaceAlias
+) }}
+{{ end }}

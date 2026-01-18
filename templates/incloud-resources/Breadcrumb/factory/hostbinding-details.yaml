@@ -1,0 +1,29 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-project-factory-hostbinding-details
+spec:
+  id: "stock-project-factory-hostbinding-details"
+  breadcrumbItems:
+    - key: hostbindings
+      label: "netguard.sgroups.io/v1beta1/hostbindings"
+      link: "/openapi-ui/{cluster}/{namespace}/api-table/netguard.sgroups.io/v1beta1/hostbindings"
+    - key: hostbinding
+      label: "{9}"
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-instance-factory-hostbinding-instance-details
+spec:
+  id: "stock-instance-factory-hostbinding-instance-details"
+  breadcrumbItems:
+    - key: hostbindings
+      label: "netguard.sgroups.io/v1beta1/hostbindings"
+      link: "/openapi-ui/{cluster}/{namespace}/{syntheticProject}/api-table/netguard.sgroups.io/v1beta1/hostbindings"
+    - key: hostbinding
+      label: "{10}"
+{{ end }}

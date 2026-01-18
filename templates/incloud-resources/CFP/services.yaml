@@ -1,0 +1,35 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.services
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/services
+  values:
+    - path:
+        - metadata
+      value: 
+        generateName: dynamic-
+
+    - path:
+        - spec
+        - addressGroups
+        - "*"
+        - apiVersion
+      value: netguard.sgroups.io/v1beta1
+
+    - path:
+        - spec
+        - addressGroups
+        - "*"
+        - kind
+      value: addressGroup
+
+    - path:
+        - spec
+        - ingressPorts
+        - "*"
+        - description
+      value: Опишите назначение порта
+{{ end }}

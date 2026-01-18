@@ -1,0 +1,21 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: factory-hbf-service-details-port-mapping
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .port
+      name: Port
+      type: string
+
+    - jsonPath: .protocol
+      name: Protocol
+      type: string
+
+    - jsonPath: .description
+      name: Description
+      type: string
+  id: factory-hbf-service-details-port-mapping
+{{ end }}

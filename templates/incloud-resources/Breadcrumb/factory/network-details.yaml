@@ -1,0 +1,29 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-project-factory-network-details
+spec:
+  id: "stock-project-factory-network-details"
+  breadcrumbItems:
+    - key: networks
+      label: "netguard.sgroups.io/v1beta1/networks"
+      link: "/openapi-ui/{cluster}/{namespace}/api-table/netguard.sgroups.io/v1beta1/networks"
+    - key: network
+      label: "{9}"
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: Breadcrumb
+metadata:
+  name: stock-instance-factory-network-instance-details
+spec:
+  id: "stock-instance-factory-network-instance-details"
+  breadcrumbItems:
+    - key: networks
+      label: "netguard.sgroups.io/v1beta1/networks"
+      link: "/openapi-ui/{cluster}/{namespace}/{syntheticProject}/api-table/netguard.sgroups.io/v1beta1/networks"
+    - key: network
+      label: "{10}"
+{{ end }}

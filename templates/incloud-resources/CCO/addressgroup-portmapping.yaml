@@ -1,0 +1,156 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-namespace-netguard.sgroups.io.v1beta1.addressgroup-portmapping
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .name
+      name: Service
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.namespace']['-']}/factory/hbf-service-details/netguard.sgroups.io/v1beta1/services/{reqsJsonPath[0]['.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.name']['-']}"
+
+    - jsonPath: .namespace
+      name: Namespace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: Namespace
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/factory/namespace-details/v1/namespaces/{reqsJsonPath[0]['.namespace']['-']}
+              id: name-link
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.namespace']['-']}"
+            {{ end }}
+
+    - jsonPath: .ports.TCP[*].port
+      name: TCP Ports
+      type: array
+
+    - jsonPath: .ports.UDP[*].port
+      name: UDP Ports
+      type: array
+
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Namespace
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+  id: stock-namespace-netguard.sgroups.io.v1beta1.addressgroup-portmapping
+
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomColumnsOverride
+metadata:
+  name: stock-instance-netguard.sgroups.io.v1beta1.addressgroup-portmapping
+spec:
+  additionalPrinterColumns:
+    - jsonPath: .name
+      name: Service
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: "{reqsJsonPath[0]['.kind']['-']}"
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/{reqsJsonPath[0]['.namespace']['-']}/{4}/factory/hbf-service-instance-details/netguard.sgroups.io/v1beta1/services/{reqsJsonPath[0]['.name']['-']}
+              id: name-link
+              text: "{reqsJsonPath[0]['.name']['-']}"
+
+    - jsonPath: .namespace
+      name: Namespace
+      type: factory
+      customProps:
+        disableEventBubbling: true
+        items:
+        - type: antdFlex  
+          data:
+            align: center
+            direction: row
+            gap: 6
+            id: resource-badge-link-row
+          children:
+          - type: ResourceBadge
+            data:
+              id: example-resource-badge
+              value: Namespace
+          - type: antdLink
+            data:
+              href: /openapi-ui/{2}/factory/namespace-details/v1/namespaces/{reqsJsonPath[0]['.namespace']['-']}
+              id: name-link
+            {{ if .Values.webResources.displayNamespaceAlias }}
+              text: |
+                {reqsJsonPath[0]['.additionalReqsData.0.items[?(@.metadata.name=="{reqsJsonPath[0][".metadata.namespace"]}")].metadata.labels.alias']['-']}
+            {{ else }}
+              text: "{reqsJsonPath[0]['.namespace']['-']}"
+            {{ end }}
+
+    - jsonPath: .ports.TCP[*].port
+      name: TCP Ports
+      type: array
+
+    - jsonPath: .ports.UDP[*].port
+      name: UDP Ports
+      type: array
+  additionalPrinterColumnsTrimLengths:
+    - key: Name
+      value: 63
+    - key: Namespace
+      value: 63
+  additionalPrinterColumnsUndefinedValues:
+    - key: Name
+      value: "-"
+    - key: Namespace
+      value: "-"
+  id: stock-instance-netguard.sgroups.io.v1beta1.addressgroup-portmapping
+{{ end }}

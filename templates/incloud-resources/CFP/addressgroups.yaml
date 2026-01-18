@@ -1,0 +1,35 @@
+{{ if .Values.webResources.enabled }}
+---
+apiVersion: front.in-cloud.io/v1alpha1
+kind: CustomFormsPrefill
+metadata:
+  name: netguard.sgroups.io.v1beta1.addressgroups
+spec:
+  customizationId: default-/netguard.sgroups.io/v1beta1/addressgroups
+  values:
+
+    - path:
+        - metadata
+      value: 
+        name: example
+    - path:
+        - spec
+      value:
+        defaultAction: DROP
+        # logs: true
+        trace: true
+
+    - path:
+        - spec
+        - hosts
+        - "*"
+        - apiVersion
+      value: netguard.sgroups.io/v1beta1
+
+    - path:
+        - spec
+        - hosts
+        - "*"
+        - kind
+      value: Host
+{{ end }}
