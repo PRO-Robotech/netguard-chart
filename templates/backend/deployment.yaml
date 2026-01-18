@@ -1,4 +1,5 @@
 {{- $backend        := .Values.backend -}}
+{{- $migration      := $backend.migrationContainer -}}
 {{- $certSource     := .Values.tls.certSource -}}
 {{- $certSecretName := "" -}}
 {{- if eq $certSource "certmanager" }}
@@ -97,6 +98,25 @@ spec:
             {{- with $backend.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+      initContainers:
+        - name: goose
+          {{- with $migration.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ $migration.image.repository }}:{{ $migration.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $migration.image.pullPolicy }}
+          {{- with $migration.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - secretRef: 
+                name: "{{ include "netguard-chart.fullname" . }}-database"
+          {{- with $migration.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: configfile
           configMap:
