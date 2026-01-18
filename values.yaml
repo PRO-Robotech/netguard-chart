@@ -111,11 +111,11 @@ apiserver:
 
   nodeSelector: {}
 
-  tolerations: []
-    # - key: node-role.kubernetes.io/data-plane
-    #   effect: NoSchedule
-    # - key: node-role.kubernetes.io/in-cloud-infra
-    #   effect: NoSchedule
+  tolerations:
+    - key: node-role.kubernetes.io/data-plane
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/in-cloud-infra
+      effect: NoSchedule
 
   affinity: {}
 
@@ -274,7 +274,11 @@ backend:
 
   nodeSelector: {}
 
-  tolerations: []
+  tolerations:
+    - key: node-role.kubernetes.io/data-plane
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/in-cloud-infra
+      effect: NoSchedule
 
   affinity: {}
 
@@ -446,7 +450,11 @@ webhookserver:
 
   nodeSelector: {}
 
-  tolerations: []
+  tolerations:
+    - key: node-role.kubernetes.io/data-plane
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/in-cloud-infra
+      effect: NoSchedule
 
   affinity: {}
 
