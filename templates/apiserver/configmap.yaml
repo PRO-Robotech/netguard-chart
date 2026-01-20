@@ -1,6 +1,6 @@
 {{- $config         := .Values.apiserver.config -}}
 {{- $backendConfig  := $config.backend_client -}}
-{{- $backendAddr    := printf "%s-backend:%s" (include "netguard-chart.fullname" .) .Values.backend.service.ports.grpc -}}
+{{- $backendAddr    := printf "%s-backend:%v" (include "netguard-chart.fullname" .) .Values.backend.service.ports.grpc -}}
 {{- if $backendConfig.endpoint }}
   {{- $backendAddr  = $backendConfig.endpoint -}}
 {{- end }}
