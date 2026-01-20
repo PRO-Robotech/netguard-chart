@@ -243,13 +243,13 @@ backend:
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
     tcpSocket:
-      port: 9090
+      port: grpc
     initialDelaySeconds: 15
     periodSeconds: 20
 
   readinessProbe:
     tcpSocket:
-      port: 9090
+      port: grpc
     initialDelaySeconds: 5
     periodSeconds: 10
 
