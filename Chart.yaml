@@ -21,7 +21,7 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "CLOUD-70_merge-8a236b31"
+appVersion: "bugfix-CLOUD-391_same_name_in_ref-9644c326"
 
 dependencies:
   - name: postgresql
