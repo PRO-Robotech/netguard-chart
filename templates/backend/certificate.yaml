@@ -31,7 +31,8 @@ spec:
     - client auth
     - signing
     - key encipherment
-  organizations:
-    - "hbf:masters"
+  subject:
+    organizations:
+      - "hbf:masters"
   secretName: {{ include "netguard-chart.fullname" . }}-backend
 {{- end }}
