@@ -242,18 +242,14 @@ backend:
 
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
-    httpGet:
-      path: /healthz
-      port: http
-      scheme: HTTPS
+    tcpSocket:
+      port: 9090
     initialDelaySeconds: 15
     periodSeconds: 20
 
   readinessProbe:
-    httpGet:
-      path: /readyz
-      port: http
-      scheme: HTTPS
+    tcpSocket:
+      port: 9090
     initialDelaySeconds: 5
     periodSeconds: 10
 
@@ -425,6 +421,7 @@ webhookserver:
       scheme: HTTPS
     initialDelaySeconds: 15
     periodSeconds: 20
+
   readinessProbe:
     httpGet:
       path: /readyz
@@ -465,7 +462,6 @@ webhookserver:
   affinity: {}
 
   priorityClassName: system-cluster-critical
-
 
 # Database
 externalDatabase:
