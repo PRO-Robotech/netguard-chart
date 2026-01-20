@@ -69,7 +69,7 @@ data:
           {{ with $clientCa }}
           ca_file: {{ index . 0 }}
           {{- end }}
-          insecure_skip_verify: {{ $clientVerify }}
+          insecure_skip_verify: {{ eq $clientVerify "skip" }}
         {{- end }}
 
       retry:
