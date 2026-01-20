@@ -10,7 +10,7 @@ metadata:
 spec:
   type: {{ .Values.webhookserver.service.type }}
   ports:
-    - port: {{ .Values.webhookserver.service.port }}
+    - port: {{ $webhookserver.service.ports.http }}
       targetPort: http
       protocol: TCP
       name: http
