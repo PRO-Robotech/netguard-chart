@@ -4,8 +4,11 @@
 {{- if $backendConfig.endpoint }}
   {{- $backendAddr  = $backendConfig.endpoint -}}
 {{- end }}
-{{- $authnConfig    := $config.authn -}}
-{{- $clientCa       := (index $authnConfig.tls.client "ca-files" | default list) -}}
+{{- $authnConfig  := $config.authn -}}
+{{- $certFile     := (dig "tls" "cert-file" "/opt/h-bf/netguard/tls/tls.crt" $authnConfig) -}}
+{{- $keyFile      := (dig "tls" "key-file" "/opt/h-bf/netguard/tls/tls.key" $authnConfig) -}}
+{{- $clientCa     := (dig "tls" "client" "ca-files" (list "/opt/h-bf/netguard/tls/ca.crt") $authnConfig) -}}
+{{- $clientVerify := (dig "tls" "client" "verify" "skip" $authnConfig) -}}
 
 {{- if .Values.apiserver.enabled }}
 ---
@@ -58,13 +61,13 @@ data:
         client:
           verify: "skip"
     {{- else }}
-      type: {{ $authnConfig.type | default "tls" }}
+      type: "tls"
       tls:
-        cert-file: "/etc/certs/tls.crt"
-        key-file: "/etc/certs/tls.key"
+        cert-file: {{ $certFile }}
+        key-file: {{ $keyFile }}
         client:
           # skip - for self-signed certs
-          verify: {{ $authnConfig.tls.client.verify | default "skip" }}
-          ca-files: {{ $clientCa | toYaml }}
+          verify: {{ $clientVerify }}
+          ca-files: {{ $clientCa | toYaml | nindent 12 }}
     {{- end }}
 {{- end }}

@@ -7,6 +7,10 @@
 {{- else if eq $certSource "secret" }}
 {{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
 {{- end }}
+{{- $configTLS      := (dig "authn" "tls" (dict) $backend.config) -}}
+{{- $certFile       := (dig "cert-file" "/opt/h-bf/netguard/tls/tls.crt" $configTLS) -}}
+{{- $keyFile        := (dig "key-file" "/opt/h-bf/netguard/tls/tls.key" $configTLS) -}}
+{{- $clientCa       := (dig "client" "ca-files" "/opt/h-bf/netguard/tls/ca.crt" $configTLS) -}}
 {{- $sa     := $backend.serviceAccount -}}
 {{- $saName := default (printf "%s-backend" (include "netguard-chart.fullname" .)) $sa.name -}}
 {{- if not $sa.create }}
@@ -92,8 +96,15 @@ spec:
               name: configfile
               subPath: client-config
             {{- if $certSecretName }}
-            - mountPath: /etc/certs/
+            - mountPath: {{ $certFile | quote }}
               name: certificate
+              subPath: tls.crt
+            - mountPath: {{ $keyFile | quote }}
+              name: certificate
+              subPath: tls.key
+            - mountPath: {{ $clientCa | quote }}
+              name: certificate
+              subPath: ca.crt
             {{- end }}
             {{- with $backend.volumeMounts }}
             {{- toYaml . | nindent 12 }}

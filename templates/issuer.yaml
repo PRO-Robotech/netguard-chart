@@ -1,6 +1,6 @@
 {{- $extIssuer    := .Values.tls.certmanager.existingIssuer -}}
 
-{{- if and (eq .Values.tls.certSource "certmanager") (and not $extIssuer.kind $extIssuer.name) }}
+{{- if eq .Values.tls.certSource "certmanager" }}
 {{- if or (not $extIssuer.kind) (not $extIssuer.name) }}
 ---
 apiVersion: cert-manager.io/v1

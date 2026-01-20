@@ -1,4 +1,5 @@
-{{- if .Values.webhookserver.enabled }}
+{{- $webhookserver := .Values.webhookserver -}}
+{{- if $webhookserver.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -8,7 +9,7 @@ metadata:
     app.kubernetes.io/component: webhookserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.webhookserver.service.type }}
+  type: {{ $webhookserver.service.type }}
   ports:
     - port: {{ $webhookserver.service.ports.http }}
       targetPort: http

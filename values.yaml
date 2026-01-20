@@ -157,14 +157,15 @@ apiserver:
       # "tls" - default value for kubernetes
       # "none" - disable tls
       type: "tls"
-      tls:
-        # Default cert/key files pathes
-        # cert-file: "/etc/certs/tls.crt"
-        # key-file: "/etc/certs/tls.key"
-        client:
-          # skip - for self-signed certs
-          verify: "skip"
-          ca-files: []
+      # tls:
+      #   # Default cert/key files pathes
+      #   cert-file: "/opt/h-bf/netguard/tls/tls.crt"
+      #   key-file: "/opt/h-bf/netguard/tls/tls.key"
+      #   client:
+      #     # skip - for self-signed certs
+      #     verify: "skip"
+      #     ca-files:
+      #       - /opt/h-bf/netguard/tls/ca.crt
 
   customConfigConfigMapName: "" # set CM key as "client-config"
 
@@ -292,14 +293,14 @@ backend:
       # "tls" - default value for kubernetes
       # "none" - disable tls
       type: "tls"
-      tls:
-        # Default cert/key files pathes
-        # cert-file: "/etc/certs/tls.crt"
-        # key-file: "/etc/certs/tls.key"
-        client:
-          # skip - for self-signed certs
-          verify: "skip"
-          ca-files: []
+      # tls:
+      #   # Default cert/key files pathes
+      #   cert-file: "/opt/h-bf/netguard/tls/tls.crt"
+      #   key-file: "/opt/h-bf/netguard/tls/tls.key"
+      #   client:
+      #     # skip - for self-signed certs
+      #     verify: "skip"
+      #     ca-files: []
 
   customConfigConfigMapName: "" # set CM key as "client-config"
 
@@ -358,8 +359,8 @@ webhookserver:
   args:
     - --bind-address=0.0.0.0
     - --port=8443
-    - --tls-cert-file=/etc/certs/tls.crt
-    - --tls-private-key-file=/etc/certs/tls.key
+    - --tls-cert-file=/opt/h-bf/netguard/tls/tls.crt
+    - --tls-private-key-file=/opt/h-bf/netguard/tls/tls.key
 
   # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
   serviceAccount:
