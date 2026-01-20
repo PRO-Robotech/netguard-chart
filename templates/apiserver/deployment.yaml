@@ -65,14 +65,14 @@ spec:
           imagePullPolicy: {{ $apiServer.image.pullPolicy }}
           command:
             - /netguard-apiserver
+          {{- if or $certSecretName $apiServer.extraArgs }}
           args:
-            - --config=/etc/netguard/config.yaml
-          # TODO: Убедится, что все эти параметры корректно задаются через конфиг
-          #   - --bind-address=0.0.0.0
-          #   - --secure-port=8443
-          #   - --tls-cert-file=/etc/certs/tls.crt
-          #   - --tls-private-key-file=/etc/certs/tls.key
-          #   - --v=2
+            - --tls-cert-file={{ $certFile }}
+            - --tls-private-key-file={{ $keyFile }}
+            {{ with $apiServer.extraArgs }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ $apiServer.service.ports.http }}
@@ -92,7 +92,7 @@ spec:
           volumeMounts:
             - mountPath: /etc/netguard/config.yaml
               name: configfile
-              subPath: client-config
+              subPath: config
           {{- if $certSecretName }}
             - mountPath: {{ $certFile | quote }}
               name: certificate

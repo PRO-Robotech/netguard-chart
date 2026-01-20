@@ -20,7 +20,7 @@ metadata:
     app.kubernetes.io/component: apiserver
     {{- include "netguard-chart.labels" . | nindent 4 }}
 data:
-  client-config: |
+  config: |
     bind_address:   "0.0.0.0"
     secure_port:    {{ .Values.apiserver.service.port }}
     insecure_port:  0  # Insecure port is disabled by default for Kubernetes
