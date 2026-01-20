@@ -2,9 +2,9 @@
 {{- $certSource     := .Values.tls.certSource -}}
 {{- $certSecretName := "" -}}
 {{- if eq $certSource "certmanager" }}
-{{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
+{{- $certSecretName = printf "%s-webhookserver" (include "netguard-chart.fullname" .) -}}
 {{- else if eq $certSource "secret" }}
-{{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- $certSecretName = .Values.tls.secret.webhookserver.secretName -}}
 {{- end }}
 {{- $sa     := $webhookserver.serviceAccount -}}
 {{- $saName := default (printf "%s-webhookserver" (include "netguard-chart.fullname" .)) $sa.name -}}

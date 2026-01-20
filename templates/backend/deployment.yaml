@@ -3,9 +3,9 @@
 {{- $certSource     := .Values.tls.certSource -}}
 {{- $certSecretName := "" -}}
 {{- if eq $certSource "certmanager" }}
-{{- $certSecretName = printf "%s-apiserver" (include "netguard-chart.fullname" .) -}}
+{{- $certSecretName = printf "%s-backend" (include "netguard-chart.fullname" .) -}}
 {{- else if eq $certSource "secret" }}
-{{- $certSecretName = .Values.tls.secret.apiserver.secretName -}}
+{{- $certSecretName = .Values.tls.secret.backend.secretName -}}
 {{- end }}
 {{- $configTLS      := (dig "authn" "tls" (dict) $backend.config) -}}
 {{- $certFile       := (dig "cert-file" "/opt/h-bf/netguard/tls/tls.crt" $configTLS) -}}
