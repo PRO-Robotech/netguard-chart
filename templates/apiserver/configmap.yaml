@@ -22,7 +22,7 @@ metadata:
 data:
   config: |
     bind_address:   "0.0.0.0"
-    secure_port:    {{ .Values.apiserver.service.port }}
+    secure_port:    {{ .Values.apiserver.service.ports.http }}
     insecure_port:  0  # Insecure port is disabled by default for Kubernetes
 
     # Logging
