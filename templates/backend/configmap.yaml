@@ -44,6 +44,7 @@ data:
           # skip - for self-signed certs
           verify: {{ $authnConfig.tls.client.verify | default "skip" }}
           ca-files: {{ $clientCa | toYaml }}
+    {{- end }}
 
     sync:
       enabled: true
@@ -117,5 +118,4 @@ data:
         metrics_port: 8090
         graceful_shutdown_timeout: "30s"
         environment: "production"
-    {{- end }}
 {{- end }}
