@@ -291,7 +291,7 @@ backend:
   priorityClassName: system-cluster-critical
 
   config:
-    sgroups_address:
+    sgroups_address: sgroups-server.incloud-sgroups.svc:9006
     logLevel: "DEBUG"
     authn:
       # Type: tls, none.
