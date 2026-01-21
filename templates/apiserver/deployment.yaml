@@ -65,12 +65,14 @@ spec:
           imagePullPolicy: {{ $apiServer.image.pullPolicy }}
           command:
             - /netguard-apiserver
-          {{- if or $certSecretName $apiServer.extraArgs }}
           args:
             - --config=/etc/netguard/config.yaml
-            {{ with $apiServer.extraArgs }}
+          {{- if $certSecretName }}
+            - --tls-cert-file={{ $certFile }}
+            - --tls-private-key-file={{ $keyFile }}
+          {{- end }}
+          {{ with $apiServer.extraArgs }}
             {{ toYaml . | nindent 12 }}
-            {{- end }}
           {{- end }}
           ports:
             - name: http
