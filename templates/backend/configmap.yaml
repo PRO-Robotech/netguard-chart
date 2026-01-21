@@ -27,7 +27,7 @@ data:
       grpc-addr: ":{{ $backend.service.ports.grpc }}"
 
     logger:
-      log-level: {{ $backend.logLevel }}
+      log-level: {{ $config.logLevel }}
 
     authn:
       # Type: tls, none.

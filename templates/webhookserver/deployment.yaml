@@ -65,6 +65,9 @@ spec:
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: BACKEND_ENDPOINT
+              value: {{ include "netguard-chart.fullname" . }}-backend:{{ .Values.backend.service.ports.grpc }}
           ports:
             - name: http
               containerPort: {{ $webhookserver.service.ports.http }}

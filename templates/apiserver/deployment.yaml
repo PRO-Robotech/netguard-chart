@@ -67,8 +67,7 @@ spec:
             - /netguard-apiserver
           {{- if or $certSecretName $apiServer.extraArgs }}
           args:
-            - --tls-cert-file={{ $certFile }}
-            - --tls-private-key-file={{ $keyFile }}
+            - --config=/etc/netguard/config.yaml
             {{ with $apiServer.extraArgs }}
             {{ toYaml . | nindent 12 }}
             {{- end }}
