@@ -67,6 +67,8 @@ spec:
             - /netguard-apiserver
           args:
             - --config=/etc/netguard/config.yaml
+            - --bind-address=0.0.0.0
+            - --secure-port={{ $apiServer.service.ports.http }}
           {{- if $certSecretName }}
             - --tls-cert-file={{ $certFile }}
             - --tls-private-key-file={{ $keyFile }}
