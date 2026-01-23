@@ -67,18 +67,9 @@ spec:
             - /netguard-apiserver
           args:
             - --config=/etc/netguard/config.yaml
-            - --bind-address=0.0.0.0
-            - --secure-port={{ $apiServer.service.ports.http }}
-          {{- if $certSecretName }}
-            - --tls-cert-file={{ $certFile }}
-            - --tls-private-key-file={{ $keyFile }}
-          {{- end }}
           {{ with $apiServer.extraArgs }}
             {{ toYaml . | nindent 12 }}
           {{- end }}
-          env:
-            - name: BACKEND_ENDPOINT
-              value: {{ include "netguard-chart.fullname" . }}-backend:{{ .Values.backend.service.ports.grpc }}
           ports:
             - name: http
               containerPort: {{ $apiServer.service.ports.http }}
