@@ -34,5 +34,6 @@ spec:
   subject:
     organizations:
       - "hbf:masters"
+      - "hbf:workers"
   secretName: {{ include "netguard-chart.fullname" . }}-backend
 {{- end }}
