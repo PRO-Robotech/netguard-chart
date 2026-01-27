@@ -129,6 +129,22 @@ spec:
 
                               - type: antdFlex
                                 data:
+                                  id: hostname-block
+                                  gap: 4
+                                  vertical: true
+                                children:
+                                  - type: antdText
+                                    data:
+                                      id: hostname-label
+                                      strong: true
+                                      text: Hostname
+                                  - type: parsedText
+                                    data:
+                                      id: hostname-value
+                                      text: '{reqsJsonPath[0][".items.0.xMetaInfo.hostName"]["-"]}'
+
+                              - type: antdFlex
+                                data:
                                   id: ns-block
                                   gap: 4
                                   vertical: true

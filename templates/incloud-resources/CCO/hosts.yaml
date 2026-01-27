@@ -33,6 +33,10 @@ spec:
                 overflow: hidden
                 text-overflow: ellipsis
 
+    - jsonPath: .xMetaInfo.hostName
+      name: Hostname
+      type: string
+
     - jsonPath: .metadata.namespace
       name: Namespace
       type: factory
@@ -164,6 +168,10 @@ spec:
                 overflow: hidden
                 text-overflow: ellipsis
 
+    - jsonPath: .xMetaInfo.hostName
+      name: Hostname
+      type: string
+
     - jsonPath: .status.addressGroupRef.name
       name: AG
       type: factory
@@ -267,6 +275,10 @@ spec:
                 overflow: hidden
                 text-overflow: ellipsis
 
+    - jsonPath: .xMetaInfo.hostName
+      name: Hostname
+      type: string
+
     - jsonPath: .status.addressGroupRef.name
       name: AG
       type: factory
@@ -369,6 +381,10 @@ spec:
                 white-space: nowrap
                 overflow: hidden
                 text-overflow: ellipsis
+
+    - jsonPath: .xMetaInfo.hostName
+      name: Hostname
+      type: string
 
     - jsonPath: .status.addressGroupRef.name
       name: AG

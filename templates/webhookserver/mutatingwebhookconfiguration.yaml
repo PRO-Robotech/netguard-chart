@@ -43,6 +43,7 @@ webhooks:
           - svcsvcrules
           - networkbindings
           - svcfqdnrules
+          - iecidrsvrules
         scope: Namespaced
     failurePolicy: Fail
     sideEffects: None
