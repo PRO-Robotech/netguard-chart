@@ -52,8 +52,6 @@ spec:
       - serviceTo
       - apiVersion
     - - spec
-      - priority
-    - - spec
       - logs
 
   customizationId: default-/netguard.sgroups.io/v1beta1/svcsvcrules

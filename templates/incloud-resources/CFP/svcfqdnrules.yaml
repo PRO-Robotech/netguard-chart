@@ -25,4 +25,5 @@ spec:
         trace: false
         action: ACCEPT
         transport: TCP
+        priority: 0
 {{ end }}

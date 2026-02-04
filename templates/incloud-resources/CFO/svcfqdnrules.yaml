@@ -43,8 +43,6 @@ spec:
       - serviceFrom
       - kind
     - - spec
-      - priority
-    - - spec
       - logs
 
   customizationId: default-/netguard.sgroups.io/v1beta1/svcfqdnrules

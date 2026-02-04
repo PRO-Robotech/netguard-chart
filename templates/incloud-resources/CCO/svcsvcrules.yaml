@@ -157,6 +157,10 @@ spec:
                 display: block
                 width: "300px"
 
+    - jsonPath: .spec.priority
+      name: Priority
+      type: string
+
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
       type: bool
@@ -182,6 +186,8 @@ spec:
       value: 'false'
     - key: Description
       value: "-"
+    - key: Priority
+      value: "0"
     - key: Ready
       value: "-"
   id: stock-cluster-/netguard.sgroups.io/v1beta1/svcsvcrules
@@ -344,6 +350,10 @@ spec:
                 display: block
                 width: "300px"
 
+    - jsonPath: .spec.priority
+      name: Priority
+      type: string
+
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
       type: bool
@@ -369,6 +379,8 @@ spec:
       value: 'false'
     - key: Description
       value: "-"
+    - key: Priority
+      value: "0"
     - key: Ready
       value: "-"
   id: stock-namespace-/netguard.sgroups.io/v1beta1/svcsvcrules
@@ -531,6 +543,10 @@ spec:
                 display: block
                 width: "300px"
 
+    - jsonPath: .spec.priority
+      name: Priority
+      type: string
+
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
       type: bool
@@ -556,6 +572,8 @@ spec:
       value: 'false'
     - key: Description
       value: "-"
+    - key: Priority
+      value: "0"
     - key: Ready
       value: "-"
   id: stock-project-/netguard.sgroups.io/v1beta1/svcsvcrules
@@ -718,6 +736,10 @@ spec:
                 display: block
                 width: "300px"
 
+    - jsonPath: .spec.priority
+      name: Priority
+      type: string
+
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
       type: bool
@@ -743,6 +765,8 @@ spec:
       value: 'false'
     - key: Description
       value: "-"
+    - key: Priority
+      value: "0"
     - key: Ready
       value: "-"
   id: stock-instance-/netguard.sgroups.io/v1beta1/svcsvcrules

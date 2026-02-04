@@ -25,4 +25,5 @@ spec:
         # logs: false
         trace: false
         action: ACCEPT
+        priority: 0
 {{ end }}
